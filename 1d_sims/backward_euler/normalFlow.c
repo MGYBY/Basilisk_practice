@@ -2,16 +2,16 @@
 // use multilayer model only
 
 #include "grid/multigrid1D.h"
-#include "saint-venant.h"
+#include "green-naghdi.h"
 
 // problem-sepcific parameters
 double So = 0.05011;
 double normalDepth = 0.00798;
-double normalVelocity = 1.0311;
+double normalVelocity = 1.0377;
 double gravityCoeff = 9.81;
 double disMag = 0.05;
 double disPeriod = 0.933;
-double simTime = 40.0;
+double simTime = 80.0;
 double cf; // = gravityCoeff * So * 2. * normalDepth / (sq(normalVelocity));
 
 /**
@@ -24,19 +24,9 @@ int main()
      N = 4056;
      L0 = 40.;
      G = gravityCoeff;
-//      nl = 1;
-//      nu = 0.;
-     CFL = 0.70; // CFL number should be sufficiently small
-     // follow "$example/tsunami.c" method
-
-     // h[left] = dirichlet(normalDepth + disMag * normalDepth * sin(2. * pi * t / disPeriod));
-     // u.n[left] = dirichlet(normalVelocity);
-
-     // u.n[right] = neumann(0);
-     // h[right] = neumann(0);
-     // u.n[right] = radiation(normalVelocity);
-     // h[right] = radiation(normalDepth);
-     // breaking = 0.1;
+     theta = 2.0;
+     CFL = 0.40; // CFL number should be sufficiently small
+     // gradient = NULL;
      run();
 }
 
@@ -63,10 +53,10 @@ event init(i = 0)
 
      foreach ()
      {
-          zb[] = -So * x;
-//           zb[] = 0.;
-               h[] = normalDepth;
-               u.x[] = normalVelocity;
+          // zb[] = -So * x;
+          zb[] = 0.;
+          h[] = normalDepth;
+          u.x[] = normalVelocity;
      }
 }
 
@@ -79,8 +69,8 @@ event friction(i++)
           // double a = h[] < dry ? HUGE : 1. + (cf / (2.)) * dt * norm(u) / h[];
           // double a = 1. + (cf / (2.)) * dt * u.x[] / h[];
           foreach_dimension()
-                  u.x[] /= 1. + (cf / (2.) * dt * fabs(u.x[])) / (h[]);
-//               u.x[] = (u.x[] + G * So * dt) / (1. + (cf / (2.)) * dt * u.x[] / (h[]));
+              //     u.x[] /= a;
+              u.x[] = (u.x[] + G * So * dt) / (1. + (cf / (2.)) * dt * u.x[] / (h[]));
      }
      boundary((scalar *){u.x}); // note that the input should be a list (at least for 1d)
 }
@@ -98,13 +88,13 @@ void plot_profile(double t, FILE *fp)
              "set term pngcairo enhanced size 800,600 font \",10\"\n"
              "set output 't%.0f.png'\n"
              "set title 't = %.2f'\n"
+             "set xlabel 'x(m)'\n"
+             "set ylabel 'eta(m)'\n"
              "plot [0:40][0:]'-' u 1:2 w l lw 2\n",
              t, t);
      foreach ()
      {
-          {
-               fprintf(fp, "%g %g\n", x, h[]);
-          }
+          fprintf(fp, "%g %g\n", x, h[]);
      }
      fprintf(fp, "e\n\n");
      fflush(fp);
@@ -135,7 +125,7 @@ event output(t = 0; t <= simTime; t += 2)
      sprintf(name, "out-%.0f", t);
      FILE *fp = fopen(name, "w");
      foreach ()
-          fprintf(fp, "%g %g %g %g\n", x, eta[], u.x[], zb[]);
+          fprintf(fp, "%g %g %g %g\n", x, h[], u.x[], zb[]);
      fprintf(fp, "\n");
      fclose(fp);
 }
