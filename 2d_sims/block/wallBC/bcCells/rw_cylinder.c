@@ -126,8 +126,8 @@ event outputDrag(i++)
   foreach_boundary(block)
   {
     // coefficient to conver to x-component
-    k1 = (cylinderCenterX - x) / cylinderRadius;
-    fd += k1 * 0.5 * rhoWater * gravityCoeff * (Delta * h[]) * h[];
+    // k1 = (cylinderCenterX - x) / cylinderRadius;
+    fd += ((cylinderCenterX - x) / cylinderRadius) * 0.5 * rhoWater * gravityCoeff * (Delta * h[]) * h[];
   }
 
   /**
