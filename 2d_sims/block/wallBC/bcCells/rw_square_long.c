@@ -213,5 +213,5 @@ event fieldOutput(t = 2; t <= simTime; t += 2)
 event adapt(i++)
 {
   astats s = adapt_wavelet({h}, (double[]){normalDepth / 150.0}, maxlevel = MAXMAXLEVEL, minlevel = MAXLEVEL);
-  fprintf(stderr, "# refined %d cells, coarsened %d cells\n", s.nf, s.nc);
+  //fprintf(stderr, "# refined %d cells, coarsened %d cells\n", s.nf, s.nc);
 }
