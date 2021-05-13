@@ -177,8 +177,9 @@ along the cross-sections corresponding with the experimental data. */
 //   return fluid;
 // }
 
-event fieldOutput(t = 0; t <= simTime; t += 2)
+event fieldOutput(t = 2; t <= simTime; t += 2)
 {
+  // ignore I.C.
   char name1[24];
   char name2[24];
   char name3[24];
