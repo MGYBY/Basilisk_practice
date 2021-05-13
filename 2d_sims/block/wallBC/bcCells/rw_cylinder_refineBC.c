@@ -95,14 +95,6 @@ event init(i = 0)
   }
 }
 
-event updateBC(i==5){
-    N=pow(2, MAXMAXLEVEL);
-  // for 2-D case 40x3m
-  mask(y > Ly ? top : none);
-  // block bc
-  mask(sq(x - cylinderCenterX) + sq(y - cylinderCenterY) <= sq(cylinderRadius) ? cylinder : none);    
-}
-
 /**
 To implement an absorbing boundary condition, we add an area for $x >
 12$ for which quadratic friction increases linearly with $x$. */
