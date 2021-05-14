@@ -28,7 +28,7 @@ double coordTol = 1e-7;
 double rhoWater = 1e3;
 
 // for debugging
-double blockXLower = 1e2;
+double blockXLower = 1e4;
 double blockXUpper = 0.0;
 
 // homogeneous bc
