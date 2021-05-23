@@ -28,7 +28,7 @@ double simTime = 40.0;
 double Lx = 22.0;
 double Ly = 3.0;
 double cf; // = gravityCoeff * So * 2. * normalDepth / (sq(normalVelocity));
-// block geometry
+// circular geometry
 double cylinderCenterX = 20.20;
 double cylinderCenterY = 1.50;
 double cylinderRadius = 0.2;
@@ -36,7 +36,7 @@ double coordTol = 1e-7;
 // drag force calc
 double rhoWater = 1e3;
 
-// homogeneous bc
+// symmetric bc
 bid cylinder;
 //free-slip bc
 //not working???
