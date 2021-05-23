@@ -67,7 +67,7 @@ event init(i = 0)
   refine (sq(x-cylinderCenterX) + sq(y-cylinderCenterY) < sq(cylinderRadius*1.20) && level < MAXMAXLEVEL);
   // for 2-D case 40x3m
   mask(y > Ly ? top : none);
-  // block bc
+  // circular bc
   mask(sq(x - cylinderCenterX) + sq(y - cylinderCenterY) <= sq(cylinderRadius) ? cylinder : none);
 
   // L0 = 40.;
