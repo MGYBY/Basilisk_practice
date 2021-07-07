@@ -1,0 +1,2 @@
+Special treatment of relatively small obstacle using reginonal refinement. 
+Adoption of the script "adapt_wavelet_limited.h" is necessary.  Small revision of the source code in the sandbox.
