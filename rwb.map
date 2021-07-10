@@ -1,0 +1,57 @@
+#!MC 900
+$!COLORMAP
+  CONTOURCOLORMAP = USERDEF
+$!COLORMAPCONTROL RESETTOFACTORY
+$! MODIFIED BRIGHT RED-BLUE COLORMAP
+  USERDEFINED
+    {
+    NUMCONTROLPOINTS = 3
+    CONTROLPOINT 1
+      {
+      COLORMAPFRACTION = 0.000000
+      LEADRGB
+        {
+        R = 0
+        G = 0
+        B = 255
+        }
+      TRAILRGB
+        {
+        R = 0
+        G = 0
+        B = 255
+        }
+      }
+    CONTROLPOINT 2
+      {
+      COLORMAPFRACTION = 0.50
+      LEADRGB
+        {
+        R = 255
+        G = 255
+        B = 255
+        }
+      TRAILRGB
+        {
+        R = 255
+        G = 255
+        B = 255
+        }
+      }
+    CONTROLPOINT 3
+      {
+      COLORMAPFRACTION = 1.0
+      LEADRGB
+        {
+        R = 255
+        G = 0
+        B = 0
+        }
+      TRAILRGB
+        {
+        R = 255
+        G = 0
+        B = 0
+        }
+      }
+    }
