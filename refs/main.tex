@@ -1,0 +1,508 @@
+
+\documentclass{jfm}
+
+\usepackage{graphicx}
+%\usepackage{epstopdf,epsfig}
+\usepackage{newtxtext}
+\usepackage{newtxmath}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\hypersetup{
+    colorlinks = true,
+    urlcolor   = blue,
+    citecolor  = black,
+}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{listings}
+
+%% Sets page size and margins
+
+\usepackage{float}
+%% Useful packages
+\usepackage{amsmath}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{listings}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{threeparttable}
+\usepackage{booktabs}
+\usepackage{bm}
+\usepackage{physics}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{xcolor}
+
+\newcommand{\fr}{{\rm{Fr}}}
+\newcommand{\frn}{{\rm{Fr_n}}}
+\newcommand{\pa}[2]{\frac{\partial#1}{\partial#2}}
+\newcommand{\md}{{\rm{d}}}
+\newcommand{\nd}{h_n}
+\definecolor{Blue}{rgb}{0,0,0.5}
+\definecolor{Green}{rgb}{0,255,0}
+\definecolor{Red}{rgb}{255,0,0.5}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newcommand{\RomanNumeralCaps}[1]
+\linenumbers
+
+
+% {\MakeUppercase{\romannumeral #1}}
+\title{The Wave Impact Force on Square Cylinders Produced by Front Runners}
+
+\author{Boyuan Yu\aff{1}, Vincent H. Chu\aff{2}\corresp{\email{vincent.chu@mcgill.ca}}}
+
+\affiliation{\aff{1}Department of Civil Engineering and Applied Mechanics, McGill University, Montreal, QC, H3A 0C3, Canada
+\aff{2}Department of Civil Engineering and Applied Mechanics, McGill University, Montreal, QC, H3A 0C3, Canada}
+
+\begin{document}
+\maketitle
+%\nocite{*}
+
+\begin{abstract}
+Abstract here.
+\end{abstract}
+
+\begin{keywords}
+Authors should not enter keywords on the manuscript, as these must be chosen by the author during the online submission process and will then be added during the typesetting process (see \href{https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/information/list-of-keywords}{Keyword PDF} for the full list).  Other classifications will be added at the same time.
+\end{keywords}
+
+{\bf MSC Codes }  {\it(Optional)} Please enter your MSC Codes here
+
+\section{Reference Items}
+\textit{just a temporary section}
+
+\citet{Shietal2012}, \citet{Brock1967}, \citet{Kennedy2000}, \citet{Larsen1983}, \citet{Cornish1934}, \citet{Balmforth2004}, \citet{Dressler1949}, \citet{Zanuttigh2002}, \citet{Que2006}, \citet{Needham1984}, \citet{Jeffreys1925}, \citet{Ponce1977}, \citet{Brock1970}, \citet{Ivanova2017},  \citet{Richard2012}, \citet{Cao2015}, \citet{Chen2021}, \citet{Liu1994}, \citet{Yu2021}, \citet{Qin2018}, \citet{Vire2016}, \citet{Kamath2015}, \citet{Zhong2009}, \citet{Robertson2013}, \citet{Cassan2014}, \citet{An2012}, \citet{Xie2019}, \citet{Douglas2015}, \citet{Jacobs2015}, \citet{LeVeque-FVMHP}, \citet{Toro2009}, \citet{LeVeque2011}, \citet{Ketcheson2020}, \citet{Kurganov2002}, \citet{Perthame2001}, \citet{George2008}, \citet{Popinet2015}. \citet{Popinet2011}, \citet{Popinet2021}, \cite{clawpack2021}, \citet{Kemm2014}, \citet{Kemm2008}, \cite{Liu2005}, \citet{Popinet2009}, \citet{Greaves1998}, \citet{KetParLev13}, \citet{Ketcheson2008}, \citet{Popinet2003}, \citet{Toro2001}, \citet{Hervouet2007}, \citet{Shu1988}, \citet{Kurganov2002b}, \citet{Pareschi2005}, \citet{Berger1989}, \citet{Oishi2013}, \citet{Piggott2008}, \citet{Jiang1996} \citet{Audusse2004}, \citet{Causon2001}
+%
+%
+\section{Introduction}
+\label{sec:intro}
+\begin{itemize}
+	\item  \textcolor{Red}{Roll wave and front runner}  The open-channel flow in the steep slope could become unstable  and  evolve to a train of successive moving hydraulic bores when the normal-flow Froude number exceeds a certain threshold, which is referred to as roll waves and was first observed by \cite{Cornish1934}. The roll wave tends to cause significant increase of the bottom stress and water depth. Therefore, it is of great interest by the hydraulic engineers (\cite{Balmforth2004}). 
+	
+	The reproduction of the roll wave was reproduced experimentally by Brock (\cite{Brock1967}) and Brock's experiment is the most systematic experimental investigation so far. The roll wave was formed using two methods: (1) the inlet disturbance is introduced using the plastic peddle and consequently the periodic roll wave is formed in the downstream; (2) no inlet disturbance is introduced and the roll wave train could naturally appear in the downstream. Brock recorded the wave form of the roll wave and made the comparison with the analytical solution proposed by Dressler (\cite{Dressler1949}). As is pointed out by Brock, there is remarkable difference between experimental and analytical results. \cite{Liu2005} observed roll waves in their experiments. However, no qualitative measurement and comparison was made.
+	
+	Numerous analytical and numerical investigations were performed to investigate the roll-wave phenomenon. Shallow water equations serve as a simplified and faithful model for roll-wave study and were a widely used method in the literature (analytical methods: \cite{Dressler1949}, \cite{Needham1984}, \cite{Jeffreys1925}, \cite{Ponce1977}; numerical simulations: \cite{Zanuttigh2002}, \cite{Que2006}). Due to the difference between the experiment and the shallow water model, many enhanced models were developed:
+	\begin{enumerate}
+		\item Including the shock thickness to the formulation (\cite{Brock1970}).
+		\item Richard-Gavrilyuk equations (\cite{Ivanova2017}, \cite{Richard2012})
+		\item Introducing turbulence model (\cite{Cao2015}, \cite{Chen2021}).
+	\end{enumerate}  
+
+	The traditional work focuses on the periodic roll wave train initiated by a certain disturbance period. However, there is lack of theory and finding about the non-periodic roll wave. Basically, there are two types of non-periodic roll wave investigated in the literature:
+	\begin{enumerate}
+		\item Natural roll wave characterized by coarsening and combining (\cite{Zanuttigh2002}, \cite{Cao2015}, \cite{Ivanova2017}).
+		
+		\item Front runner developing in the sufficiently long channel (\cite{Liu1994}, \cite{Yu2021}).  Front runner is commonly omitted in the studies of the roll wave and its existence has not been identified in the laboratory experiments.
+	\end{enumerate}
+	
+	
+	Traditionally, only one-dimensional simulation is performed for roll-wave simulation. Two-dimensional  problems related to the roll wave are somehow neglected in the previous studies. Especially, the destructive power of the roll wave has not been quantitatively and systematically studied so far (till year 2021).
+	
+	
+	\item \textcolor{Red}{Wave force on Structures}
+	Wave forms used in the wave force study:
+	\begin{enumerate}
+		\item Solitary wave, Stokes wave and cnoidal wave: \cite{Robertson2013}, \cite{Zhong2009},  \cite{Kamath2015}.
+		\item Dam-break wave: \cite{Qin2018}, \cite{Vire2016}, \cite{Douglas2015}. 
+		\item Constant flow: \cite{Cassan2014}, \cite{Jacobs2015}.
+		\item Hydraulic bore: \cite{Xie2019}, \cite{An2012}.
+	\end{enumerate}
+According to the above list, there is no previous study on the wave force generated by the roll wave. However, the roll wave impacting on the hydraulic structure is quite likely to happen in the open channel.
+
+The normal-flow condition is a commonly encountered scenario in the  open-channel flow and is specifically of interest by hydraulic engineering practitioners. The blunt-body flow pattern for the normal-flow in the shallow waters, especially flow for high Froude numbers were not systematically studied.
+	
+	\item \textcolor{Red}{Numerical Method, Wetting and Drying, Carbuncles, AMR, Basilisk} The shallow water equations could be categorized as hyperbolic conservation law. If the source term is included, the equation set is referred to as balance law. Hyperbolic conservation law and balance law could be solved numerically using Godunov-type FVM (Finite Volume Method) (\cite{LeVeque-FVMHP}, \cite{Toro2009}). Several specific requirements are proposed by the practical shallow-water flow simulation. Reasonable handling of the wetting and drying is one of the requirements (\cite{LeVeque2011}), since the determination of the moving shoreline is of great significance in flood inundation and tsunami modelling. The approximate Riemann solvers which could maintain the depth positivity are: (1) HLL family scheme (\cite{Ketcheson2020}); (2) kinetic scheme (\cite{Perthame2001}); (3) central-upwind scheme (\cite{Kurganov2002}); (4) augmented Riemann solver (\cite{George2008}).
+	
+	Carbuncle phenomenon is a commonly-encountered numerical artifact for high Mach number or high Froude number flow  (\cite{Kemm2014}). In the context of blunt-body flow, due to the carbuncle phenomenon, the bow shock wave could not be reasonably represented. Severe carbuncle phenomenon could even make the whole simulation collapse due to the occurrence of the negative water depth. There are basically two methods to avoid carbuncle: (1) Blending numerical methods with different dissipation and dissipate the carbuncle instability by switching to high-dissipative numerical method. One of the representative numerical scheme is HLLEMCC (\cite{Kemm2008}, \cite{Kemm2014}). (2) Using entropy stabilization method (Ketcheson and de Luna 2021 ??). From the author's experience, the built-in numerical scheme of Basilisk is free-of-carbuncle for shallow-water flow with Froude number up to 5.60.
+	
+	Mesh adaptivity technique could be basically classified into three categories: (1) Adaptive Mesh Refinement (AMR) approach (\cite{Berger1989}, \cite{LeVeque2011}) using hierarchical Cartesian mesh; (2) Quadtree mesh adaptivity (\cite{Popinet2003}); (3) anisotropic unstructured mesh adaptivity (\cite{Piggott2008}). The adaptive mesh technique is specifically attractive in large-scale numerical simulations, e.g. tsunami simulation (\cite{Oishi2013}, \cite{LeVeque2011}, \cite{Popinet2011}) and turbulence simulation (\cite{Greaves1998}). Quadtree mesh adaptivity technique serves as a flexible and efficient mesh generation method and have been successfully used to significantly reduce computational cost. For a detailed discussion of the quadtree adaptivity algorithm, we refer to \cite{An2012}, \cite{Popinet2011} and \cite{Popinet2015}.
+	
+	Basilisk is a free and open source software (\cite{Popinet2021}, \cite{Popinet2015}, \cite{Popinet2003}) which is capable of solving shallow water equations using FVM. Due to the utilization of the TVD scheme and predictor-corrector scheme, the spatial-temporal second-order accuracy is achieved. The AMR technique is used in order to resolve small-scale structures and save computational cost in the large scale simulations (for example, global-scale tsunami modelling). Basilisk has been extensively validated against various benchmark tests.  For detailed introduction of the built-in algorithm of Basilisk, we refer to \cite{Popinet2015} and \cite{Popinet2011}. 
+\end{itemize}
+
+The goal of this work is to investigate the wave impact force on the square cylinder produced by the front runner and the problem definition sketch is shown in \autoref{def_sketch}. This article consists of ?6? sections including the first introduction section.  Section 2 is explanation of the governing equations and numerical methods used in the numerical simulation. Section 3 presents the drag force produced by the normal-flow impacting on the square block in the open-channel. Section 4 demonstrates the drag force of the periodic roll wave acting on the square block. The wave force generated by the front runner acting on the square block is shown in section 5. Conclusions are summarized in section 6. Appendices include some additional materials. ??need further explanation??
+
+
+\begin{figure}
+	\centerline{\includegraphics[width=1.0\textwidth]{def_sketch}}
+	\caption{Definition sketch the obstacle impacted by the normal flow for $\fr=3.71,\,S_o=0.05011,\,c_f=7.280\times10^{-3}$. The obstacle has the dimensionality $W/H=75$. The extrapolation boundary condition at three sides is denoted as green dash lines and the inlet is located at $x=0$. The location of the block $x_b$ is annotated using black dash-dot lines and in this case, $x_b/W=266.67$. Upper panels: centerline water depth profiles; lower panels: water depth contours. The overly shallow region (?dry bed?) (the region where $h/H<0.01$) is colored in black. (a): $S_otU/H=567.1$, before the impact of the front runner; (b): $S_otU/H=578.6$, after the impact of the front runner.}
+	\label{def_sketch}
+\end{figure}
+
+
+\section{Governing Equations and Initial Boundary Conditions}
+Unless specifically mentioned, the discussion is restricted to the two-dimensional shallow water equations for now.  Fully nonlinear Boussinesq equations serve as a validation test against shallow water equations.
+\subsection{Shallow Water Equations}
+Two-dimensional shallow water equations in the conservative form (\cite{Toro2001}):
+\begin{equation}
+	\pa{h}{t}+\pa{hu}{x}+\pa{hv}{y}=0
+	\label{swe1}
+\end{equation}
+
+\begin{equation}
+	\pa{hu}{t}+\pa{(hu^2+\frac{1}{2}gh^2)}{x}+\pa{(huv)}{y}= ghS_o-\frac{c_f}{2}u\sqrt{u^2+v^2}
+	\label{swe2}
+\end{equation}
+
+\begin{equation}
+	\pa{hv}{t}+\pa{(huv)}{x}+\pa{(hv^2+\frac{1}{2}gh^2)}{y}= -\frac{c_f}{2}v\sqrt{u^2+v^2}
+	\label{swe3}
+\end{equation}
+where $h$ is the water depth; $u,\,v$ are two components fo the depth-averaged horizontal velocities; $S_o$ is the channel slope; $g$ is the acceleration of gravity; $c_f$ is the Ch\'ezy quadratic friction coefficient.
+
+Alternatively, the SWEs \autoref{swe1}, \autoref{swe2}, \autoref{swe3}  could be rewritten as the integral form (may be useful for the formulation of numerical method):
+\begin{equation}
+\pa{}{t}\int_{\Omega}\pmb{q}\md \Omega = \int_{\partial \Omega}\left (  \pmb{F}(\pmb{q}) \right ) \cdot \pmb{n} \md \partial \Omega+\int_{\Omega} \pmb{S}\md \Omega
+\label{swe11}
+\end{equation}
+where $\pmb{q}$ and $\pmb{{F}}$ and $ \pmb{S}$ are  the vector of conserved variables and  the flux vector function and the source term, respectively, and are given by
+\begin{equation}
+{\pmb q} = \left( \begin{array}{c} h\\
+	hu \\
+	hv \end{array} \right) ,
+ \; {\pmb{F}} =\begin{pmatrix}
+	hu & hv \\
+	hu^2+\frac{1}{2}gh^2 & hvu \\
+	huv & hv^2+\frac{1}{2}gh^2
+\end{pmatrix} ,
+ \; \pmb{S} =  \left( \begin{array}{c}
+	0 \\
+	ghS_o-\frac{c_f}{2}u\sqrt{u^2+v^2} \\
+	-\frac{c_f}{2}v\sqrt{u^2+v^2}
+	\end{array}
+\right)
+\end{equation}
+
+The normal flow is defined as the the balance between bed-friction:
+\begin{equation}
+	S_o = {c_f} \fr^2 / {2}
+	\label{normalFlow}
+\end{equation}
+where $\fr$ is the Froude number based on the normal flow $\fr=U/\sqrt{gH}$.
+
+
+Initial condition is specified as the normal flow for the corresponding Froude number, namely $h(x, t=0)=H,\, u(x, t=0)=U,\, v(x, t=0)=0$.
+
+Boundary conditions are specified consistent with the model setup illustrated in \autoref{def_sketch}:
+\begin{itemize}
+	\item Left side: continuous or impulse sinusoidal incoming waves, which is essentially a time-dependent Dirichlet boundary condition. Three categories of inlet disturbance are investigated here (\cite{Yu2021}):
+\begin{equation}
+{\rm Type \ a:}  \ h(x=0,y, t)=[1+\epsilon\sin (\frac{2 \pi t}{T})] H  \ {\rm for} \  0 < t < \infty
+\label{type-a}
+\end{equation}
+\begin{equation}
+{\rm Type \ b:}  \  h(x=0,y,  t)=[1+\epsilon\sin  (\frac{2 \pi t}{T})] H  \ {\rm for} \  0 < t \le T \ {\rm and}	\  h(0, t)={H} \ {\rm for} \   t >  T
+\label{type-b}
+\end{equation}
+\begin{equation}
+{\rm Type \ c:}  \  h(x=0,y,  t)=[1+\epsilon\sin (\frac{2 \pi t}{T})] H \ {\rm for} \  0 < t \le \frac{1}{2} T \ {\rm and}	\   h(0, t)={H} \ {\rm for} \   t > \frac{1}{2} T
+\label{type-c}
+\end{equation}
+where $\epsilon$ is the disturbance amplitude; $T$ is the disturbance period; the x-momentum $q_x(x=0,y,  t)$ is selected to make the normal-flow Froude number constant and the x-momentum $q_y(x=0,y,  t)$ is set to be zero.
+	\item Right side: zero-order extrapolation (outflow);
+	\item Top and bottom side: zero-order extrapolation (outflow);
+	\item Obstacle: modelled as a physical boundary using impermeability condition (\cite{Hervouet2007}):
+	\begin{equation}
+		\vec{u} \cdot \vec{n}=0
+		\label{obstacleBC}
+	\end{equation}
+The obstacle considered here is the square cylinder with the width $W$.
+%Two kinds of obstacle shapes are considered here: (1) Square cylinder with width and length $W$; (2) Circular cylinder with radius $W/2$.
+\end{itemize}
+
+Drag force is normalized by two methods:
+
+\begin{enumerate}
+	\item  The drag force is normalized by the normal-flow depth and velocity and consequently, the drag coefficient is defined as:
+\begin{equation}
+	C_D=\frac{\int_{\partial \Omega} \vec{p}_h \cdot \vec{n}_x \,{\rm{d}}S }{\frac{1}{2}\rho W U^2 H}\equiv \frac{F_D}{\frac{1}{2}\rho W U^2 H}
+	\label{CD_def1}
+\end{equation}
+where $W$ is the characteristic dimension of the obstacle; $\partial \Omega$ is the boundary of the obstacle; $\vec{p}_h$ is the hydrostatic pressure acting on the obstacle, $p_h=\frac{1}{2}\rho g h^2$, pointing towards the internal of the obstacle; $F_D$ is the resultant dimensional drag force acting on the cylinder. Note that the drag force may be more appropriately normalized using other scales in the transient problem (for example, using $\overline{h}$ and $\overline{u}$, shown below).
+
+For the square cylinder, \autoref{CD_def1} is reduced to:
+\begin{equation}
+	C_D=\frac{\frac{1}{2} W u_{front}^2 h_{front}- \frac{1}{2} W u_{back}^2 h_{back}}{\frac{1}{2} W U^2 H}
+	\label{CD_def_square}
+\end{equation}
+where the subscript "front" denotes the related variables at the front of the square block and the subscript "back" denotes the related variables at the back of the square block.
+
+In the following discussion, we denote specifically $\hat{C}_{D_{FR}},\, \check{C}_{D_{FR}}$ as the peak and trough drag coefficient of the front runner using the normalization method \autoref{CD_def1}.
+
+	\item The drag force could also be normalized by: (1) the water depth and velocity of the  incident wave; (2) the water depth and phase speed of the  incident wave:
+
+\begin{equation}
+%	\hat{C} _{_{FR}}=\frac{\hat{F}_{D_{FR}} }{\frac{1}{2}\rho W \hat{u}_{_{FR}}^2 \hat{h}_{_{FR}}}
+	{C} _{_{FR}}=\frac{F_{D}}{\frac{1}{2}\rho W \hat{u}_{_{FR}}^2 \hat{h}_{_{FR}}
+	\label{CD_FR_def2}}
+\end{equation}
+
+\begin{equation}
+	{C} _{W_{FR}}=\frac{F_{D}}{\frac{1}{2}\rho W c_{_{FR}}^2 \hat{h}_{_{FR}}}
+	\label{CD_FR_def3}
+\end{equation}
+where ${C} _{_{FR}}$ is the front-runner drag coefficient defined by the drag force divided by the front-runner water depth $\hat{h}_{FR}$ and velocity $\hat{u}_{FR}$; ${C} _{W_{FR}}$ is the wave drag coefficient of the front runner defined by the drag force divided by the front-runner water depth $\hat{h}_{FR}$ and phase speed ${c}_{FR}$.
+
+\end{enumerate}
+
+The normalized wave energy transferred to the obstacle $E_w$ is defined as (\textcolor{Red}{TODO}):
+\begin{equation}
+	E_w=\frac{\int_{\tilde{t}}^{\tilde{t}+\tilde{T}_W} \tilde{F} {\rm{d}}\tilde{t}}{\frac{1}{2}\rho W U^2 H \tilde{T}_W}
+	\label{wave_energy}
+\end{equation}
+where $\tilde{T}_W$ is the wave period; $\tilde{F}$ is the wave force acting on the obstacle.
+
+\subsection{Boussinesq Equations}
+Due to the absence of the experimental data and the objective to validate the usage of shallow water equations in the high-Froude-number flow, the results obtained from shallow water equations is checked against those obtained from fully-nonlinear Boussinesq equations. The conservative form of the Boussinesq equations is (\cite{Shietal2012}):
+\begin{equation}
+\frac{\partial {\bf \Psi}}{\partial t} + \nabla \cdot {\bf \Theta}({\bf \Psi}) = {\bf S}
+\label{tvd}
+\end{equation}
+where ${\bf \Psi}$ and ${\bf \Theta} ({\bf \Psi})$ are  the vector of conserved variables and  the flux vector function, respectively, and are given by
+\begin{equation}
+{\bf \Psi} = \left( \begin{array}{c} \eta \\
+	U \\
+	V \end{array} \right) ,
+\ \ \ \  \ \  {\bf \Theta} = \left( \begin{array}{c}
+	P {\bf i} + Q {\bf j} \\
+	\left[\frac{P^2}{H} +\frac{1}{2}g (\eta^2 + 2 \eta h) \right ] {\bf i} + \frac{P Q}{H} {\bf j} \\
+	\frac{P Q}{H} {\bf i} + \left[\frac{Q^2}{H} +\frac{1}{2} g (\eta^2 + 2\eta h) \right] {\bf j} 
+\end{array}
+\right) .
+\end{equation}
+
+ % Note that the definition of  $(P, Q)$ is different from that in Roeber et al. (2010) who used  $(hu_\alpha, hv_\alpha)$ as momentum fluxes.  The source terms $S_b$ and $S_f$ are
+\begin{equation}
+{\bf S} = \left( \begin{array}{c} 
+	0\\
+	g \eta \frac{\partial h}{\partial x}  +\psi_x + H R_x+HR_{bx}  \\
+	g \eta \frac{\partial h}{\partial y} + \psi_y + H R_y+HR_{by}
+\end{array}
+\right) ,
+\end{equation}
+where 
+\begin{equation}
+\psi_x =  \eta_t (U_1^{\prime}-U_4) + H \left( u U_{4,x} + v U_{4,y} + U_4 u_x +V_4 u_y  - U_1^{\prime \prime}-  U_2 -  U_3 \right) 
+\end{equation}
+
+\begin{equation}
+\psi_y =  \eta_t (V_1^{\prime}-V_4) + H \left( u V_{4,x} + v V_{4,y} + U_4 v_x +V_4 v_y - V_1^{\prime \prime} -  V_2 -  V_3 \right) 
+\end{equation}
+
+For the term $\bf R$, the bottom stress is approximated using a quadratic friction equation. The term ${\bf{R}}_{b} $ is responsible for the wave breaking. Eddy viscosity wave breaking algorithm is adopted here. The form of ${\bf{R}}_{b} $ is shown in \cite{Kennedy2000}.
+
+The initial and boundary condition is generally the same as the counterparts of the shallow water equations. Except that the radiation boundary condition is modelled as the sponge layer (\cite{Larsen1983}) which could absorb the energy of the wave.
+
+
+
+The Boussinesq simulation is performed using FUNWAVE platform (\cite{Shietal2012}).
+
+Since the definitions of the frictional force term are different for shallow water equations and Boussinesq equations, only the frictionless cases are simulated using FUNWAVE. Reproduction of roll waves using full-nonlinear Boussinesq  equations is to be done in the future work.
+
+
+\section{Numerical Method and Simulation Setups}
+Numerical implementation of the shallow-water-equation simulation is performed using the Basilisk numerical model. The method of lines approach is adopted here and the equation discretization is splitted as the hyperbolic part and non-hyperbolic part (source term). Different time integrators are utilized for the two parts. The computational cost is reduced by using wavelet-based quadtree mesh adaptivity to dynamically capture flow features.
+
+\subsection{Spatial and Temporal Discretization}
+The method for discretizing the hyperbolic part mainly follow the description in \cite{Popinet2011}, but that numerical model is slightly simplified due to the simplicity of the investigated problem. Using the basic principle of FVM, the governing equations  \autoref{swe11} could be discretized with MUSCL-type unsplit discretization combined with a predictor-corrector time stepping scheme:
+\begin{enumerate}
+\item \textit{Predictor step}
+\begin{equation}
+\tilde{\pmb{q}}_{ij}^{n+\frac{1}{2}} = \pmb{q}_{ij}^{n} - \frac{\Delta t}{2} \pmb{{F}}^n_{ij}
+\label{hyper_part_ps}
+\end{equation}
+\item \textit{Corrector step}
+\begin{equation}
+\tilde{\pmb{q}}_{ij}^{n+1} = \pmb{q}_{ij}^{n} - \Delta t \pmb{{F}}^{n+\frac{1}{2}}_{ij}
+\label{hyper_part_cs}
+\end{equation}
+\end{enumerate}
+where the tilde sign indicates that the integration of the source term is still needed to complete a full time stepping; $\pmb{{F}}^{n }_{ij}$ is defined as:
+\begin{equation}
+\begin{split}
+\pmb{{F}}^{n }_{ij} = &\Delta x_{ij}^{-1}\pmb{\mathcal{F}}(\pmb{q}_{ij,r}^{n}, \pmb{q}_{i+1j,l}^{n}) - \Delta x_{ij}^{-1}\pmb{\mathcal{F}}(\pmb{q}_{i-1j,r}^{n}, \pmb{q}_{ij,l}^{n}) \\
+						& +\Delta y_{ij}^{-1}\pmb{\mathcal{F}}(\pmb{q}_{ij,t}^{n}, \pmb{q}_{ij+1,b}^{n})-\Delta y_{ij}^{-1}\pmb{\mathcal{F}}(\pmb{q}_{ij-1,t}^{n}, \pmb{q}_{ij,b}^{n})
+\end{split}
+\end{equation}
+where $\pmb{\mathcal{F}}(\pmb{q}_i, \pmb{q}_{i+1})$ denotes the solution of the Riemann problem obtained by approximate Riemann solvers at the interface between $\pmb{q}_i$ and $\pmb{q}_{i+1}$. In this article, the  upwind central scheme (\cite{Kurganov2002}) is used  because of its simplicity and capacity of dealing with wetting-and-drying. $\pmb{q}_{ij,r}$ and $\pmb{q}_{ij,l}$ denote the slope-limited extrapolated values of $\pmb{q}_{ij}$. Following the idea of MUSCL scheme (\cite{Toro2001}), $\pmb{q}_{ij,r}$ and $\pmb{q}_{ij,l}$ are defined as:
+\begin{equation}
+\pmb{q}_{ij,l}=\pmb{q}_{ij}-\frac{1}{2}\xi(r){\grad}_x \pmb{q}\Delta x_i,\;
+%\pmb{q}_{ij,r}=\pmb{q}_{ij}+\frac{1}{2}\psi(r)\grad_x \pmb{q}\Delta x_i
+\pmb{q}_{ij,r}=\pmb{q}_{i+1j,l}
+\end{equation}
+where $\xi(r)$ is the slope limiter based on the slope $r$.
+%\begin{equation}
+%\pmb{r} = \frac{\pmb{q}_{i+1j}-\pmb{q}_{ij}}{\pmb{q}_{ij}-\pmb{q}_{i-1j}}
+%\end{equation}
+Here, the generalized MINMOD limiter (\cite{Kurganov2002b}) is used, namely:
+\begin{equation}
+\xi(r) = {\rm{minmod}}(\theta\frac{c_i-c_{i-1}}{\Delta x},  \frac{c_{i+1}-c_{i-1}}{2\Delta x},  \theta\frac{c_{i+1}-c_i}{\Delta x}),\;\theta \in [1,2]
+\label{gminmod}
+\end{equation}
+where $c$ stands for any variable of $\pmb{q}$. The free parameter $\theta$ is used to tune numerical diffusion ($\theta=1$ switches to classical MINMOD; $\theta=2$ switches to SUPERBEE). $\theta$ is set to be $1.3$ here to achieve a trade-off between numerical diffusion and accuracy. Moreover, moderate numerical diffusion could prevent the occurrence of carbuncle.
+
+
+Accordingly, $\pmb{q}_{ij,t},\,\pmb{q}_{ij,b}$ are defined \textit{mutatis mutandis}.
+
+Note that the hydrostatic reconstruction technique (\cite{Audusse2004}) is not used here, since the notion of  ''state-at-rest'' is not valid here (the base state is normal flow).
+
+The source term is integrated using  linearized backward Euler scheme (third-order TVD Runge-Kutta scheme (\cite{Shu1988}) is also used, but no observable difference is found).  The initial condition is $\pmb{q}=\tilde{\pmb{q}}^{n+1}$ and the integration advances $\Delta t$ to complete the whole time-stepping process (from $\pmb{q}^{n}$ to $\pmb{q}^{n+1}$). This temporal source term integration is consistent with the principle that the source term is better to be treated implicitly (\cite{Pareschi2005}).
+
+\subsection{Wavelet-based Quadtree Mesh Adaptivity}
+Adaptive quadtree approach has been used as an attractive grid-generation method for large-scale computation. Since numerous flow phenomena are localized, combined with smooth flow and discontinuous flow and having multi-scale features, adaptive quadtree technique could significantly reduce computational cost compared to traditional globally refined mesh. As is suggested by  \cite{Popinet2003}, the  tree-structured grids could be refined stationarily or dynamically to capture flow features, which serves as a flexible way to guarantee sufficient resolution of the numerical model. The adaptivity algorithm here utilizes the wavelet-based error estimate for the spatially discretized field. 
+
+In the simulations presented in this work, the adaptation  is associated with $h $ and performed every time step with the  maximum tolerance $\frac{1}{150}H$. Unless specifically mentioned, the mesh has the maximum level $N_{max}=2^{15}=32768$ and minimum level $N_{min}=2^{13}=8192$ in the normal-flow direction (x-direction) in the whole computational domain (length $160$m in this direction). The cell aspect ratio is set to be unity. The total computational time (clock-wall time) is about one fourth of that spent using globally refined mesh while without observable accuracy loss. \autoref{amr_comp} presents a side-by-side comparison between the water depth contour and the quadtree adaptive mesh.
+
+
+\begin{figure}
+	\centerline{\includegraphics[width=1.0\textwidth]{amr_comp}}
+	\caption{Magnified view near the block $W/H=75$ for $\fr=3.71$  at $S_otU/H=578.6$, which is the time moment when the square cylinder is impacted by the front runner.  (a) water depth (normalized by normal depth) contour; (b) triangulated quadtree adaptive mesh.}
+	\label{amr_comp}
+\end{figure}
+
+\subsection{Simulation Setups}
+The simulation of the drag force produced by the normal flow with bed-friction is not trivial because it is normal flow that impact the square cylinder before the arrival of the front runner and there is absence of related studies in the literature especially for high Froude number flows. Therefore, we studied both the normal-flow and front-runner drag force in this work.  \autoref{simulation_normalFlow}, \autoref{simulation_fr} summarize the relevant parameters used for normal-flow and front-runner simulations respectively. The friction coefficient $c_f$ is obtained using the balance between gravity and friction forces \autoref{normalFlow}.
+
+\begin{table}
+	\caption{Simulation parameters for the normal-flow simulations.}
+	\def~{\hphantom{0}}
+	\begin{center}
+		\begin{tabular}{cccc}
+			Test  & $\fr$ & $S_o$ & $W/H$\\
+			Case 1 & 1.50  & [0, 0.10]  & 75, 50, 25, 10\\
+			Case 2  & 2.00  & [0, 0.10] & 75, 50, 25, 10\\
+			Case 3   & 2.50  & [0, 0.10]  & 75, 50, 25, 10\\
+			Case 4 & 3.71 & [0, 0.10] & 75, 50, 25, 10\\
+			Case 5  &  4.63  & [0, 0.10]  & 75, 50, 25, 10\\
+			Case 6  & 5.60  & [0, 0.10] & 75, 50, 25, 10\\  
+		\end{tabular}
+	\end{center}
+\label{simulation_normalFlow}
+\end{table}
+
+\begin{table}
+	\caption{Simulation parameters for the front runner simulations.}
+	\def~{\hphantom{0}}
+	\begin{center}
+		\begin{tabular}{cccccc}
+			Test & $H$(m)& $\fr$ & $S_o$ & Disturbance Type &$W/H$\\
+%			Case 7  & 0.002536 & 2.50 & 0.0375 & from \autoref{normalFlow}& 1.000 \newline 2.014  \newline 3.000 & Square, Circular & 75\\  
+			Case 7  & 0.007980 & 3.71 & 0.0501 &  a, c & 75, 50, 25, 10\\ 
+			Case 8  & 0.005283 & 4.63 & 0.0843 & a, c & 75, 50, 25, 10\\
+			
+			Case 9  & 0.005334 & 5.60 & 0.119 & a, c & 75, 50, 25, 10\\
+		\end{tabular}
+	\end{center}
+	\label{simulation_fr}
+\end{table}
+
+\section{Roll-wave Profiles for Varied Disturbance Periods}
+Since the spatial-temporal development of the front runner is of interest in this study, it is not trivial to investigate whether the evolution of the front runner is influenced by the period of the inlet disturbance. Here, we present the development of the front runner produced by a  wide  range of inlet-disturbance periods varying from $S_oTU/H=6.08$ to $S_oTU/H=52.14$. Because there is no variation of geometry and flow direction in the y-direction, the results could be obtained using two equivalent methods: (1) conducting a two-dimensional simulation using the setup shown in \autoref{def_sketch}, but without square cylinder in the channel; (2) conducting a one-dimensional simulation with time-dependent Dirichlet  inlet and outlet boundary conditions. For simplicity, the latter method is adopted and  the evolution of the front runner and the trailing wave train is shown in \autoref{1d_periods_a} for type-a disturbance and \autoref{} for type-c disturbance (\textcolor{Red}{TODO}).
+
+\begin{figure}
+	\centerline{\includegraphics[width=1\textwidth]{1d_periods_a}}
+	\caption{The evolution of water depth profiles created by type-a disturbance for $\fr=3.71,\,S_o=0.05011,\,\epsilon=0.20$ with disturbance periods: (a) $S_oTU/H=6.08$; (b) $S_oTU/H=39.11$; (c) $S_oTU/H=52.14$. The long-wave limit is denoted as red dash lines. The Dressler's solutions are shown as red solid lines and Brock's experimental results are illustrated as blue solid lines.} 
+	\label{1d_periods_a}
+\end{figure}
+
+From the simulation results, several conclusions could be drawn: 
+\begin{enumerate}
+\item As the disturbance period is increased from  $S_oTU/H=6.08$ to $S_oTU/H=52.14$, the trailing wave train gradually becomes non-periodic. The non-periodic trailing wave train is independent from the numerical method used for the simulation and it is nothing to do with the numerical oscillation. We present the same cases using other two numerical methods in \autoref{appA}: (a) fifth-order WENO scheme (\cite{Jiang1996}) with IMEX-SSP3(4,3,3) (\cite{Pareschi2005}) implemented in \cite{Yu2021}; (b)  fifth-order WENO scheme with ten-stage, fourth-order Runge-Kutta temporal integration (RKSSP(10,4), \cite{Ketcheson2008})  implemented in the SharpClaw module of Clawpack (\cite{KetParLev13}, \cite{clawpack2021}). The non-periodic trailing wave train shows no difference when different  numerical methods are used.  This conclusion is consistent with \cite{Cao2015}.
+
+
+
+
+\item The front runner is relatively independent of the inlet disturbance period and dependent only on the normal-flow Froude number $\fr$. 
+
+\item The front runner approaches the long-wave limit (shown with red dash lines in \autoref{1d_periods_a}) as it propagates downstream.
+
+\item For the periodic trailing waves, the simulation gives consistent results with Dressler's solution (shown with red solid lines in \autoref{1d_periods_a}, \cite{Dressler1949}), but the peak water depth is slightly overestimated using shallow water theory.
+
+\end{enumerate}
+
+
+\section{Normal-flow Wave Force on the Square Cylinder}
+The setup for the numerical simulations is listed in \autoref{simulation_normalFlow}. The size of the square block is varied from $W/H=10$ to 75. To reduce the computational cost, the length of the computational domain is set to be $L_x/W=16.67$ for $W/H=75$ (dimensional length 10m). The y-directional computational domain has the length at least $L_y/W=7.5$, which is sufficiently wide to make the  wave force independent of the computational domain. Cases with smooth beds extend the y-directional computational domain to fully capture the bow-shock wave.  Due to the relative simplicity of the problem, the uniform and fixed mesh is used and the cell size is selected as $\Delta x = \Delta y = 9.77\times 10^{-3} {\rm{m}}$. The center of the left side of the square block is located at the coordinate $(\frac{L_x}{2}, \frac{L_y}{2})$. 
+
+\subsection{Water Depth Contours and Velocity Magnitude Contours for the Normal-flow Impact}
+\autoref{Fr150_nf_h}, \autoref{Fr150_nf_u}, \autoref{Fr371_nf_h}
+
+\cite{Causon2001}
+
+\begin{figure}
+	\centerline{\includegraphics[width=1\textwidth]{Fr150_nf_h}}
+	\caption{The normalized water depth $h/H$ contours for $\fr=1.50$ with different bed slopes (and different corresponding bed-friction). The contour lines for $h/H=1.0,\, 2.0,\, 3.0$ are shown using dash lines. (a) $S_o=0.00$, namely frictionless bed; (b) $S_o=0.02$; (c) $S_o=0.05$; (d) $S_o=0.10$.} 
+	\label{Fr150_nf_h}
+\end{figure}
+
+\begin{figure}
+	\centerline{\includegraphics[width=1\textwidth]{Fr150_nf_u}}
+	\caption{The normalized velocity magnitude contours $\left\|{\pmb{u}}\right\|/U$ for $\fr=1.50$ with different bed slopes (and different corresponding bed-friction).  (a) $S_o=0.00$, namely frictionless bed; (b) $S_o=0.02$; (c) $S_o=0.05$; (d) $S_o=0.10$.} 
+	\label{Fr150_nf_u}
+\end{figure}
+
+\begin{figure}
+	\centerline{\includegraphics[width=1\textwidth]{Fr371_nf_h}}
+	\caption{The normalized water depth $h/H$ contours for $\fr=3.71$ with different bed slopes (and different corresponding bed-friction). The contour lines for $h/H=2.0,\, 4.0,\, 6.0$ are shown using dash lines. (a) $S_o=0.00$, namely frictionless bed; (b) $S_o=0.02$; (c) $S_o=0.05$; (d) $S_o=0.10$.} 
+	\label{Fr371_nf_h}
+\end{figure}
+
+
+\subsection{Wave Drag Force for the Normal-flow Impact}
+
+
+
+
+\subsection{Size Effect of the Square Cylinder}
+
+
+
+\subsection{Comparison with the Boussinesq Shallow Water Model}
+
+
+
+
+
+\appendix
+\section{Non-periodic Trailing Wave Train Obtained by Different Numerical Methods}\label{appA}
+\autoref{1d_T6_comp}, \autoref{1d_T8_comp} demonstrate the water depth profiles for type-a disturbance  $S_oTU/H=39.11$ and$S_oTU/H=52.14$  respectively. Three numerical methods are used to prove that the non-periodic trailing wave and complicated wave combining process are independent of numerical methods and is not resultant from numerical oscillation. The trailing wave shows no difference for three different numerical methods, but WENO-IMEXSSP3(4,3,3) produces the depth profiles with less noise and oscillation compared to the other numerical method, especially for the one used by Basilisk. However, the numerical oscillation introduced by the algorithm of Basilisk is small in amplitude and localized mainly in the formation process of the trailing wave, which causes no trouble for our simulation. For  WENO-IMEXSSP3(4,3,3), the reader could refer to \cite{Yu2021} and  \cite{Pareschi2005} for details. For  WENO-SSPRK(10,4), the reader could refer to \cite{KetParLev13} and  \cite{Ketcheson2008} for details.
+ 
+\begin{figure}
+	\centerline{\includegraphics[width=1\textwidth]{1d_T6_comp}}
+	\caption{The comparison between the numerical results for water depth profiles, $\fr=3.71,\,S_o=0.05011,\,S_oTU/H=39.11$ obtained from: (a) WENO-IMEXSSP3(4,3,3); (b) WENO-SSPRK(10,4); (c) generalized MINMOD-predictor corrector-SSPRK3. The long-wave limit is denoted as red dash lines. The Dressler's solutions are shown as red solid lines.} 
+	\label{1d_T6_comp}
+\end{figure}
+
+\begin{figure}
+	\centerline{\includegraphics[width=1\textwidth]{1d_T8_comp}}
+	\caption{The comparison between the numerical results for water depth profiles, $\fr=3.71,\,S_o=0.05011,\,S_oTU/H=52.14$ obtained from: (a) WENO-IMEXSSP3(4,3,3); (b) WENO-SSPRK(10,4); (c) generalized MINMOD-predictor corrector-SSPRK3. The long-wave limit is denoted as red dash lines. The Dressler's solutions are shown as red solid lines.} 
+	\label{1d_T8_comp}
+\end{figure}
+
+
+%%%%%%%%%%Table Sample %%%%%%%%%%%
+%\begin{table}
+%  \begin{center}
+%\def~{\hphantom{0}}
+%  \begin{tabular}{lccccccc}
+%      Case$\#$  & $L_b $(m)    &   $c_f$ &  $U_{\rm o}$ (m/s) & $H_o$(m) & $S_{o}$(\%) & Fr$_{\rm o}$ & $N= 1.0/\Delta x$\\[3pt]
+%       1~~  & ~0.45~ & ~~0.008~~ & ~~0.12838~~ & ~~0.042~~ & 0.016 & ~0.20 & 200\\
+%       2~~  & 0.45 & ~~0.008~~ & ~~0.25675~~ & ~~0.042~~ & 0.064 & ~0.40 & 200\\
+%       3~~  & 0.45 & ~~0.008~~ & ~~0.38513~~ & ~~0.042~~ & 0.144  & ~0.60 & 200\\
+%  \end{tabular}
+%  \caption{Summary of parameters for numerical cases. Grid refinement studies are performed for cases 8-1, 8-2, 8-3 and 12-1, 12-2, 12-3 for Fr$_{\rm o}$ = 2.5 and 3.5, respectively.}
+%  \label{tab:cases}
+%  \end{center}
+%\end{table}
+
+
+\noindent{\bf Declaration of Interests}. The authors report no conflict of interest. \\
+
+\bibliographystyle{jfm}
+\bibliography{mainRef}
+
+\end{document}
