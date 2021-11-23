@@ -209,7 +209,7 @@ event fieldOutput(t = 2; t <= simTime; t += 2)
   FILE *fp1 = fopen(name1, "w");
   FILE *fp2 = fopen(name2, "w");
   FILE *fp3 = fopen(name3, "w");
-  FILE *fp4 = fopen(name1, "w");
+  FILE *fp4 = fopen(name4, "w");
 
   // compact form
   foreach ()
