@@ -42,8 +42,8 @@ int main()
   // square domain
   ly = lx;
   // lx = 7.0;
-  blockXLower = lx/2.0-blockWidth/2.0;
-  blockXUpper = lx/2.0+blockWidth/2.0;
+  blockXLower = lx/2.0+2.0;
+  blockXUpper = lx/2.0+2.0+blockWidth;
   blockYLower = lx/2.0-blockWidth/2.0;
   blockYUpper = lx/2.0+blockWidth/2.0;
   size(lx);
@@ -89,12 +89,12 @@ event init(i = 0)
   }
 
    foreach_boundary (block){
-     if (x<blockXLower)
+     if (x<=blockXLower)
      {
        blockXLowerDrag = x;
      }
 
-     if (x>blockXUpper)
+     if (x>=blockXUpper)
      {
        blockXUpperDrag = x;
      }
@@ -191,7 +191,7 @@ event outputDrag(i+=10) // for steady-state calculation
       fd -= 0.5*alpha_coeff*(Delta*h[])*h[];
     }
   }
-  fprintf(fp1, "%g %g %g\n", t, fd, fd/(0.5*(blockYUpper-blockYLower)*sq(1.0)*1.0));
+  fprintf(fp1, "%g %g %g\n", t, fd, fd/(0.5*alpha_coeff*(blockYUpper-blockYLower)*sq(1.0)*1.0));
   rmax = interpolate(h, blockXLower-lx/(pow(2, 8)), ly/2.0);
   fprintf(fp2, "%g %g \n", t, rmax);
 
