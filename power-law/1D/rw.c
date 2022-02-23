@@ -45,7 +45,7 @@ event init(i = 0)
 static double powerLawFriction(double u, double h, double n)
 {
      double rhs;
-     rhs = h-pow((u/h), n);
+     rhs = 1.0-pow((u/h), n)/h;
      return rhs;
 }
 
