@@ -55,7 +55,9 @@ static double powerLawFriction(double u, double h, double n)
 // bottom friction
 event friction(i++)
 {
-     double uMed=0.0;
+     //      double uMed=0.0;
+     double uMed1 = 0.0;
+     double uMed2 = 0.0;
      foreach ()
      {
           // rk2tvd
@@ -68,10 +70,28 @@ event friction(i++)
           // }
 
           // rk3tvd
+//           if (h[] > dry) {
+//                uMed = u.x[] + dt * powerLawFriction(u.x[], h[], n_coeff);
+//                uMed = (3.0/4.0)*u.x[] + (1.0/4.0)*uMed + (1.0/4.0)*dt*powerLawFriction(uMed, h[], n_coeff);
+//                u.x[] = (1.0/3.0)*u.x[]+(2.0/3.0)*uMed+(2.0/3.0)*dt*powerLawFriction(uMed, h[], n_coeff);
+//           }
+//           else {
+//                u.x[] = 0.0;
+//           }
+          
+          // rk104
           if (h[] > dry) {
-               uMed = u.x[] + dt * powerLawFriction(u.x[], h[], n_coeff);
-               uMed = (3.0/4.0)*u.x[] + (1.0/4.0)*uMed + (1.0/4.0)*dt*powerLawFriction(uMed, h[], n_coeff);
-               u.x[] = (1.0/3.0)*u.x[]+(2.0/3.0)*uMed+(2.0/3.0)*dt*powerLawFriction(uMed, h[], n_coeff);
+               uMed1 = u.x[];
+               uMed2 = u.x[];
+               for (int l = 0; l <= 5; l++) {
+                    uMed1 += dt * powerLawFriction(uMed1, h[], n_coeff) /6.0;
+               }
+               uMed2 = (1.0/25.0)*uMed2+(9.0/25.0)*uMed1;
+               uMed1 = 15.0*uMed2-5.0*uMed1;
+               for (int l = 6; l <= 9; l++) {
+                    uMed1 += dt * powerLawFriction(uMed1, h[], n_coeff) /6.0;
+               }
+               u.x[] = uMed2 + (3.0/5.0)*uMed1+(1.0/10.0)*dt*powerLawFriction(uMed1, h[], n_coeff) /6.0;
           }
           else {
                u.x[] = 0.0;
