@@ -4,4 +4,4 @@ One-dimensional SW simulations.
 3. Simulation file.
 
 TODO:
-- [ ] Kurganov's free-of-Riemann solver approach (central-upwind).
+- [x] Kurganov's free-of-Riemann solver approach (central-upwind).
