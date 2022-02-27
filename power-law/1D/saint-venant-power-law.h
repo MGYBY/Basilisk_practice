@@ -248,8 +248,10 @@ double update_saint_venant (scalar * evolving, scalar * updates, double dtmax)
 	the fluxes. */
 	
 	double fh, fu, fv;
-	hllc (hm, hp, um, up, Delta*cm[]/fm.x[], &fh, &fu, &dtmax);
-	fv = (fh > 0. ? u.y[-1] + dx*gu.y.x[-1] : u.y[] - dx*gu.y.x[])*fh;
+// 	hllc (hm, hp, um, up, Delta*cm[]/fm.x[], &fh, &fu, &dtmax);
+	kurganov (hm, hp, um, up, Delta*cm[]/fm.x[], &fh, &fu, &dtmax);
+	fv = (fh > 0. ? u.y[-1] + dx*gu.y.x[-1] : u.y[] - dx*gu.y.x[])*fh*betaCoeff;
+// 	fv = (fh > 0. ? u.y[-1] + dx*gu.y.x[-1] : u.y[] - dx*gu.y.x[])*fh;
 	
 	/**
 	#### Topographic source term
