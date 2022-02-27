@@ -51,3 +51,23 @@ void hllc (double hm, double hp, double um, double up, double Delta,
       *dtmax = dt;
   }
 }
+
+void kurganov (double hm, double hp, double um, double up, double Delta,
+	       double * fh, double * fq, double * dtmax)
+{
+  double cp = sqrt(G*hp+sq(up)*(betaCoeff*betaCoeff-betaCoeff)), cm = sqrt(G*hm+sq(um)*(betaCoeff*betaCoeff-betaCoeff));
+  double ap = max(betaCoeff*up + cp, betaCoeff*um + cm); ap = max(ap, 0.);
+  double am = min(betaCoeff*up - cp, betaCoeff*um - cm); am = min(am, 0.);
+  double qm = hm*um, qp = hp*up;
+  double a = max(ap, -am);
+  if (a > epsilon) {
+    *fh = (ap*qm - am*qp + ap*am*(hp - hm))/(ap - am); // (4.5) of [1]
+    *fq = (ap*(betaCoeff*qm*um + G*sq(hm)/2.) - am*(betaCoeff*qp*up + G*sq(hp)/2.) +
+	    ap*am*(qp - qm))/(ap - am);
+    double dt = CFL*Delta/a;
+    if (dt < *dtmax)
+      *dtmax = dt;
+  }
+  else
+    *fh = *fq = 0.;
+}
