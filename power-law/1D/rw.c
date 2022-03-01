@@ -106,12 +106,16 @@ event friction(i++)
 }
 
 // record max depth
-event hmax(i+=10)
+event hmax( t+= 0.125)
 {
      double maxDepth = 0.0;
      double maxDepthLocX = 0.0;
      double maxDepthVel = 0.0;
-     FILE *fp2 = fopen("maxDepth", "a+");
+     double minDepth = 0.0;
+     double minDepthLocX = 0.0;
+
+     FILE *fp2 = fopen("maxMinDepth", "a+");
+     // FR: maxDepth, minDepth, H, waveLength
      foreach ()
      {
                if (h[]>maxDepth){
@@ -120,7 +124,14 @@ event hmax(i+=10)
                     maxDepthVel = u.x[];
                }
      }
-     fprintf(fp2, "%g %g %g %g \n", t, maxDepth, maxDepthLocX, maxDepthVel);
+	 foreach ()
+	 {
+		 if (h[]<h[1] && h[]<h[-1] && x>minDepthLocX && x<maxDepthLocX ) {
+                    minDepthLocX = x;
+                    minDepth = h[];
+               }
+	 }
+     fprintf(fp2, "%g %g %g %g %g \n", t, maxDepth, minDepth, (maxDepth-minDepth), (maxDepthLocX-minDepthLocX));
      fclose(fp2);
 }
 
