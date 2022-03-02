@@ -126,10 +126,14 @@ event hmax( t+= 0.125)
      }
 	 foreach ()
 	 {
-		 if (h[]<h[1] && h[]<h[-1] && x>minDepthLocX && x<maxDepthLocX ) {
+		 if (h[]<h[1] && h[]<h[-1] && h[-1]<h[-2] && h[1]<h[2] && x>minDepthLocX && x<maxDepthLocX ) {
                     minDepthLocX = x;
                     minDepth = h[];
                }
+			   
+		else if (h[]>h[1] && h[]>h[-1] && h[1]>h[2] && h[-1]>h[-2] && h[]>1.1 && x<maxDepthLocX && x>max2LocX) {
+                    max2LocX = x;
+               }	
 	 }
      fprintf(fp2, "%g %g %g %g %g \n", t, maxDepth, minDepth, (maxDepth-minDepth), (maxDepthLocX-minDepthLocX));
      fclose(fp2);
