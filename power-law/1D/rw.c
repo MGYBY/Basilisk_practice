@@ -135,7 +135,7 @@ event hmax( t+= 0.125)
                     max2LocX = x;
                }	
 	 }
-     fprintf(fp2, "%g %g %g %g %g \n", t, maxDepth, minDepth, (maxDepth-minDepth), (maxDepthLocX-minDepthLocX));
+     fprintf(fp2, "%g %g %g %g %g %g \n", t, maxDepthLocX, maxDepth, minDepth, (maxDepth-minDepth), (maxDepthLocX-max2LocX));
      fclose(fp2);
 }
 
