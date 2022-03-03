@@ -118,7 +118,7 @@ event hmax( t+= 0.125)
      // FR: maxDepth, minDepth, H, waveLength
      foreach ()
      {
-               if (h[]>maxDepth && h[]>h[1] && h[]>h[-1]){ // to make sure tracking the 1st front
+               if (h[]>maxDepth && h[]>h[1] && h[]>h[-1] && x>maxDepthLocX){ // to make sure tracking the 1st front
                     maxDepth = h[];
                     maxDepthLocX = x;
                     maxDepthVel = u.x[];
