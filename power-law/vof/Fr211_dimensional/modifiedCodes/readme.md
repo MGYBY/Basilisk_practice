@@ -1,1 +1,1 @@
-Modified codes, mainly the acceleration issue.
+Modified codes, mainly the acceleration issue (oerwritten by `tenshion.h`).
