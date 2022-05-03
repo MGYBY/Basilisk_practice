@@ -1,9 +1,9 @@
 #include "grid/multigrid1D.h"
 #include "saint-venant-power-law.h"
 
-
-
+#define FR 0.250
 double n_coeff = 0.40;
+#define ALPHA (1/pow(FR,2.0))
 double alpha_coeff = 1.0;
 // double lx = 2.878;
 double disMag = 0.10;
@@ -15,7 +15,9 @@ int main()
 {
      L0 = 3200.0;
      N = 32768;
-     alphaCoeff = alpha_coeff;
+//      alphaCoeff = alpha_coeff;
+	/* Note that Kurganov RS uses G as alhpa! */
+	G = ALPHA;
      betaCoeff = (2.0*(1.0+2.0*n_coeff))/(2.0+3.0*n_coeff);
      // nCoeff = n_coeff;
      
