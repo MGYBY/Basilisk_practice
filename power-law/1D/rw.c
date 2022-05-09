@@ -20,6 +20,11 @@ int main()
 	G = ALPHA;
      betaCoeff = (2.0*(1.0+2.0*n_coeff))/(2.0+3.0*n_coeff);
      // nCoeff = n_coeff;
+	
+	theta = 1.35;
+	
+	// sometimes it is necessary to tune the dry threshold
+	dry = 1e-7;
      
      CFL = 0.25; // CFL number should be sufficiently small
 
