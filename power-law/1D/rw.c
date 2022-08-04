@@ -34,7 +34,8 @@ int main()
 event init(i = 0)
 {
      h[left] = dirichlet( t<distPeriod ? 1.0 + disMag * 1.0 * sin(2. * pi * t / distPeriod) : 1.0);
-     u.n[left] = dirichlet(1.0);
+     u.n[left] = dirichlet( t<( distPeriod/2.0) ? pow((1.0 + disMag * 1.0 * sin(2. * pi * t / distPeriod)), 0.50) : 1.0 );
+     # u.n[left] = dirichlet(1.0);
 
      u.n[right] = neumann(0.);
      h[right] = neumann(0.);
