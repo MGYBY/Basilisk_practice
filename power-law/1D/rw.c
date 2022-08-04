@@ -189,7 +189,7 @@ void plot_profile(double t, FILE *fp)
 {
      fprintf(fp,
              "set term pngcairo enhanced size 800,600 font \",10\"\n"
-             "set output 't%.0f.png'\n"
+             "set output 't%g.png'\n"
              "set title 't = %.2f'\n"
              "plot [0:][0:]'-' u 1:2 w l lw 2\n",
              t, t);
@@ -223,7 +223,7 @@ event gnuplot(t = 0; t <= simTime; t += 4)
 event output(t = 0; t <= simTime; t += 4)
 {
      char name[80];
-     sprintf(name, "out-%.0f.txt", t);
+     sprintf(name, "out-%g.txt", t);
      FILE *fp = fopen(name, "w");
      foreach ()
           fprintf(fp, "%g %g %g \n", x, h[], u.x[]);
