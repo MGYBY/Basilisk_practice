@@ -15,9 +15,9 @@ int main()
 {
      L0 = 3200.0;
      N = 32768;
-//      alphaCoeff = alpha_coeff;
+     alphaCoeff = alpha_coeff;
 	/* Note that Kurganov RS uses G as alhpa! */
-	G = ALPHA;
+// 	G = ALPHA;
      betaCoeff = (2.0*(1.0+2.0*n_coeff))/(2.0+3.0*n_coeff);
      // nCoeff = n_coeff;
 	
