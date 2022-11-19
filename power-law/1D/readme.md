@@ -6,3 +6,4 @@ One-dimensional SW simulations.
 TODO:
 - [x] Kurganov's free-of-Riemann solver approach (central-upwind).
 - [ ] Central-upwind scheme with numerical dissipation reduction (Kurganov & Lin 2007).
+- [ ] Passive scalar transport equation.
