@@ -12,3 +12,5 @@ mpirun --oversubscribe -np 12 ./example -parallel > log
 * [$wmostert/shallow.c](http://basilisk.fr/sandbox/wmostert/shallow.c)
 * [$vatsal/SurfaceWavesBingham.c](http://basilisk.fr/sandbox/vatsal/GenaralizedNewtonian/SurfaceWavesBingham.c)
 4. Good bview examples:
+
+5. Other visualization & PP examples:
