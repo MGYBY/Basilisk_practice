@@ -4,3 +4,4 @@ TODOs:
 - [ ] Tweak iterator parameters.
 - [ ] Improve robustness of the code.
 - [ ] Movie visualization.
+- [ ] Haromonic mean of viscosity?
