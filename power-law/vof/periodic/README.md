@@ -3,3 +3,4 @@ TODOs:
 - [ ] Appropriate top embedded solid.
 - [ ] Tweak iterator parameters.
 - [ ] Improve robustness of the code.
+- [ ] Movie visualization.
