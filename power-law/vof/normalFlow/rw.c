@@ -20,7 +20,7 @@ $$$$
 #include "embed.h"
 #include "navier-stokes/centered.h"
 #include "two-phasePL.h"
-// #include "tension.h"
+#include "./myTension.h"
 // #include "vof.h"
 // alternatively, use momentum-conserving scheme
 // #include "navier-stokes/conserving.h"
@@ -111,7 +111,7 @@ int main()
   muRef = MUMUD;
   mumax = 175.0;
 
-  // f.sigma = COEFFST;
+  f.sigma = COEFFST;
 
   // Surface tension seems not to change the solution too much, since there is very little interface curvature.
   // f.sigma = 0.072;
