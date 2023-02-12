@@ -20,11 +20,10 @@ $$$$
 #include "embed.h"
 #include "navier-stokes/centered.h"
 #include "two-phasePL.h"
-#include "myTension.h"
+#include "./myTension.h"
 // #include "vof.h"
 // alternatively, use momentum-conserving scheme
 // #include "navier-stokes/conserving.h"
-// #include "./myTension.h"
 // Gravity is modelled as body force instead of reduced gravity
 // #include "reduced.h"
 #include "view.h"
@@ -81,6 +80,7 @@ $$$$
 #define OmegaErr (5.75e-2)
 #define fErr (1e-7)
 #define VelErr (NORMALVEL/100.6)
+#define KErr (1e-4)
 
 /**
 ## Main body of the current codes
@@ -184,6 +184,11 @@ event init (i=0)
 /** ### Maximum run-time control and time & time-step logging */
 event maxdt (t <= MAXTIME; t += 0.50);
 
+event drop_remove (i += 1) {
+  remove_droplets (f, 2, 1e-4, false);
+  remove_droplets (f, 2, 1e-4, true);
+}
+
 // event timingLog(i += 10) {
 //   fprintf (stderr, "%d %g %g \n", i, t, dt);
 //   fflush (stderr);
@@ -272,13 +277,12 @@ event outputInterface(t += TOUTPUT) {
 
 // mesh adaptation
 event adapt (i++) {
-//   scalar KAPPA[], omega[];
-  scalar omega[];
-//   curvature(f, KAPPA);
+  scalar omega[], KAPPA[];
+  curvature(f, KAPPA);
   vorticity (u, omega);
   boundary ((scalar *){omega});
 //   adapt_wavelet ((scalar *){f, u.x, u.y, KAPPA, omega}, (double[]){fErr, VelErr, VelErr, KAPPAErr, OmegaErr}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
-  adapt_wavelet ((scalar *){f, u.x, u.y, omega}, (double[]){fErr, VelErr, VelErr, OmegaErr}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
+  adapt_wavelet ((scalar *){f, u.x, u.y, omega, KAPPA}, (double[]){fErr, VelErr, VelErr, OmegaErr, KErr}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
 //   adapt_wavelet ((scalar *){f, cs}, (double[]){fErr, 0.01}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
 }
 
