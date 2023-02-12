@@ -77,9 +77,9 @@ $$$$
 #define topExtent (NORMALDEPTH*4.01)
 
 #define KAPPAErr (1e-3)
-#define OmegaErr (5.75e-2)
+#define OmegaErr (1.25)
 #define fErr (1e-7)
-#define VelErr (NORMALVEL/100.6)
+#define VelErr (NORMALVEL/95.0)
 #define KErr (1e-4)
 
 /**
