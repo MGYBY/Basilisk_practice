@@ -235,14 +235,13 @@ event outputGfsFiles (t += TOUTPUT) {
 
 event outputInterface(t += TOUTPUT) {
   char names[36];
-  // sprintf(names, "interface%d", pid());
-  sprintf(names, "surf-%g.dat", t);
+  sprintf( names, "interfaceMed-%d.dat", pid() );
   FILE * fp = fopen (names, "w");
   output_facets (f,fp);
   fclose(fp);
-  // char command[80];
-  // sprintf(command, "LC_ALL=C  cat interface* > ALLINTER-%g.dat",t);
-  // system(command);// allow to use linux command in the c code to concatenate our files
+  char command[80];
+  sprintf(command, "LC_ALL=C  cat interface* > ALLINTER-%g.dat",t);
+  system(command);// allow to use linux command in the c code to concatenate our files
 
 //   char resultname[32];
 //   sprintf( resultname, "interface-%g.dat", t );
