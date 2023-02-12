@@ -3,3 +3,5 @@ Periodic power-law roll waves.
 * Controllable top location.
 * Serial or parallel run.
 * Gravity body-force & surface tension.
+* Droplet & bubble removal (for robustness).
+* Tuned adaptivity criteria.
