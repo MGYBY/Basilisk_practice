@@ -146,10 +146,10 @@ double distSurf(double xCoord)
 /** ### Init event */
 event init (i=0)
 {
-	if (!restore("restart")){
+    if (!restore("restart")){
     // double femax = 1e-4;
     // double uemax = 2e-2;
-
+    solid (cs, fs, topExtent - y );
     int jdx = 0;
     do {
       jdx += 1;
@@ -159,7 +159,8 @@ event init (i=0)
 
       foreach() {
         // variation of x-component velocity to keep discharge the same
-        u.x[] = y<=distSurf(x) ? (FR*sqrt(CHANNELCOS*GRAV*distSurf(x)))*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX))*(1.0-pow((1.0-y/distSurf(x)), (1.0+POWERLAWINDEX)/POWERLAWINDEX)) : (FR*sqrt(CHANNELCOS*GRAV*distSurf(x)))*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX));
+        // u.x[] = y<=distSurf(x) ? (FR*sqrt(CHANNELCOS*GRAV*distSurf(x)))*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX))*(1.0-pow((1.0-y/distSurf(x)), (1.0+POWERLAWINDEX)/POWERLAWINDEX)) : (FR*sqrt(CHANNELCOS*GRAV*distSurf(x)))*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX));
+        u.x[] = (y<=topExtent*1.10) ? y<=distSurf(x) ? (FR*sqrt(CHANNELCOS*GRAV*distSurf(x)))*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX))*(1.0-pow((1.0-y/distSurf(x)), (1.0+POWERLAWINDEX)/POWERLAWINDEX)) : (FR*sqrt(CHANNELCOS*GRAV*distSurf(x)))*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX)) : 0.0;
         // u.x[] = 0.0;
         u.y[] = 0.0;
         // hydrostatic pressure, zero pressure datum at free-surface
@@ -168,8 +169,10 @@ event init (i=0)
       boundary ((scalar *){u});
     }
     while (adapt_wavelet ((scalar *){f, u.x, u.y}, (double[]){fErr, VelErr, VelErr}, maxlevel = MAXLEVEL, minlevel = MINLEVEL).nf);
+    // avoid excessively large init file.
+    // unrefine(y>topExtent*1.10 && level>MAXLEVEL-4);
 
-    solid (cs, fs, topExtent - y );
+    
 
 //     jdx = 0;
 //     do {
