@@ -6,3 +6,4 @@ Features:
 * Mesh adaptivity.
 * Solid obstacle.
 * Animation output.
+* D2 implementation in 3D.
