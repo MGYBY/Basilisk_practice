@@ -171,8 +171,8 @@ void p_shape (scalar c, face vector f)
 /**
   Real top BC control
  * **/
-  // u.n[embed] = dirichlet(0.);
-  // u.t[embed] = neumann(0.);
+  u.n[embed] = dirichlet(0.);
+  u.t[embed] = (z>1.1*0.5*obsWidth && y>0.99*topExtent) ? neumann(0.) : dirichlet(0.);
 
   /*
   Inlet
