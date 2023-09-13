@@ -85,25 +85,26 @@ event friction(i++)
 //           }
           
           // rk104
-          if (h[] > dry) {
-               uMed1 = u.x[];
-               uMed2 = u.x[];
-               for (int l = 0; l <= 5; l++) {
-                    uMed1 += dt * powerLawFriction(uMed1, h[], n_coeff) /6.0;
-               }
-               uMed2 = (1.0/25.0)*uMed2+(9.0/25.0)*uMed1;
-               uMed1 = 15.0*uMed2-5.0*uMed1;
-               for (int l = 6; l <= 9; l++) {
-                    uMed1 += dt * powerLawFriction(uMed1, h[], n_coeff) /6.0;
-               }
-               u.x[] = uMed2 + (3.0/5.0)*uMed1+(1.0/10.0)*dt*powerLawFriction(uMed1, h[], n_coeff) /6.0;
-          }
-          else {
-               u.x[] = 0.0;
-          }
+          // if (h[] > dry) {
+          //      uMed1 = u.x[];
+          //      uMed2 = u.x[];
+          //      for (int l = 0; l <= 5; l++) {
+          //           uMed1 += dt * powerLawFriction(uMed1, h[], n_coeff) /6.0;
+          //      }
+          //      uMed2 = (1.0/25.0)*uMed2+(9.0/25.0)*uMed1;
+          //      uMed1 = 15.0*uMed2-5.0*uMed1;
+          //      for (int l = 6; l <= 9; l++) {
+          //           uMed1 += dt * powerLawFriction(uMed1, h[], n_coeff) /6.0;
+          //      }
+          //      u.x[] = uMed2 + (3.0/5.0)*uMed1+(1.0/10.0)*dt*powerLawFriction(uMed1, h[], n_coeff) /6.0;
+          // }
+          // else {
+          //      u.x[] = 0.0;
+          // }
 
           //linearized backeard Euler
           // u.x[] = h[] > dry ? (u.x[] + dt)/(1.0+dt*(1.0/h[])*((pow(u.x[], (n_coeff-1.0)))/(pow(h[], n_coeff)))) : 0.0;
+          u.x[] = h[]>dry && u.x[]>(1.1/HUGE)  ? (u.x[] + dt)/(1.0+dt*(1.0/h[])*((pow(u.x[], (n_coeff-1.0)))/(pow(h[], n_coeff)))) : u.x[]/HUGE;
           // uMed = u.x[] + dt * chezyBedFriction(u.x[], h[], cf);
           // uMed = (3. / 4.) * u.x[] + (1. / 4.) * uMed + (1. / 4.) * dt * chezyBedFriction(uMed, h[], cf);
           // u.x[] = (1. / 3.) * u.x[] + (2. / 3.) * uMed + (2. / 3.) * dt * chezyBedFriction(uMed, h[], cf);
