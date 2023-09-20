@@ -5,9 +5,9 @@
 #include "./saint-venant_hllc.h"
 #include "utils.h"
 
-#define MAXLEVEL 12
+#define MAXLEVEL 9
 #define MINLEVEL 5
-#define MAXMAXLEVEL 15
+#define MAXMAXLEVEL 14
 
 // problem-sepcific parameters
 #define So 0.05011
@@ -24,14 +24,14 @@
 #define OUTPUTINTERVAL 1.00
 
 #define Lx 162.0
-#define distLength (50.0*(Lx/pow(2, MAXMAXLEVEL)))
-#define Ly (distLength*32.0)
+#define distLength (32.0*(Lx/pow(2, MAXMAXLEVEL)))
+#define Ly (distLength*64.0)
 // #define Ly (distLength*1.0)
 #define cf (gp * So * 2. * normalDepth / (normalVelocity*normalVelocity)) // = gravityCoeff * So * 2. * normalDepth / (sq(normalVelocity));
 
-#define hemax (normalDepth/500.0)
+#define hemax (normalDepth/550.0)
 #define uemax (normalVelocity/500.0)
-#define hmaxemax (hemax/2.0)
+#define hmaxemax (hemax/2.50)
 
 // double FrNum=0.0;
 
@@ -53,7 +53,7 @@ int main()
 //   theta = 1.5; // use Sweby limiter
   // N = 1024;
 
-  theta = 1.30;
+  theta = 1.350;
 
   /**
   We turn off limiting to try to reduce wave dissipation. */
@@ -61,20 +61,6 @@ int main()
 
   run();
 }
-
-// h[left] = dirichlet((t<=disPeriod/2.0 && y<=distLength) ? normalDepth + disMag * normalDepth * sin(2. * pi * t / disPeriod) : normalDepth);
-// u.n[left] = dirichlet((t<=disPeriod/2.0 && y<=distLength) ? frn*sqrt(gp*(normalDepth + disMag * normalDepth * sin(2. * pi * t / disPeriod))) : normalVelocity);
-// u.t[left] = dirichlet(0.0);
-
-// h[left] = ((t<=disPeriod/2.0 && y<=distLength) ? normalDepth + disMag * normalDepth * sin(2. * pi * t / disPeriod) : normalDepth);
-// u.n[left] = ((t<=disPeriod/2.0 && y<=distLength) ? frn*sqrt(gp*(normalDepth + disMag * normalDepth * sin(2. * pi * t / disPeriod))) : normalVelocity);
-// u.t[left] = (0.0);
-//
-// u.n[right] = neumann(0.);
-// h[right] = neumann(0.);
-
-// u.n[bottom] = neumann(0.);
-// h[bottom] = neumann(0.);
 
 event init(i = 0)
 {
@@ -86,9 +72,9 @@ event init(i = 0)
   // block bc
 //   mask(x >= leftCoord ? (x <= rightCoord ? (y >= bottomCoord ? (y <= topCoord ? block : none) : none) : none) : none);
 
-  h[left] = ((t<=disPeriod/2.0 && y<=distLength) ? normalDepth + disMag * normalDepth * sin(2. * pi * t / disPeriod) : normalDepth);
-  u.n[left] = ((t<=disPeriod/2.0 && y<=distLength) ? frn*sqrt(gp*(normalDepth + disMag * normalDepth * sin(2. * pi * t / disPeriod))) : normalVelocity);
-  u.t[left] = (0.0);
+  h[left] = dirichlet((t<=disPeriod/2.0 && y<=distLength) ? normalDepth + disMag * normalDepth * sin(2. * pi * t / disPeriod) : normalDepth);
+  u.n[left] = dirichlet((t<=disPeriod/2.0 && y<=distLength) ? frn*sqrt(gp*(normalDepth + disMag * normalDepth * sin(2. * pi * t / disPeriod))) : normalVelocity);
+  u.t[left] = dirichlet(0.0);
 
   u.n[right] = neumann(0.);
   h[right] = neumann(0.);
@@ -99,7 +85,7 @@ event init(i = 0)
   u.n[bottom] = dirichlet(0.);
   u.t[bottom] = neumann(0.);
   h[bottom] = neumann(0.);
-  
+
 //   refine(((x >= 0.0) && (x <= rightCoord+0.50)) && level < 14);
 
   // L0 = 40.;
@@ -134,8 +120,9 @@ To implement an absorbing boundary condition, we add an area for $x >
 
 event friction(i++)
 {
-  double uMed;
-  
+//   double uMed;
+  double uMed, uprev;
+
   foreach ()
   {
     // double a = h[] < dry ? HUGE : 1. + (cf / (2.)) * dt * norm(u) / h[];
@@ -150,16 +137,25 @@ event friction(i++)
 //       uMed = (3. / 4.) * u.y[] + (1. / 4.) * uMed + (1. / 4.) * dt * (-(cf / 2.) * uMed * sqrt(sq(uMed)+sq(u.x[])) / h[]);
 //       u.y[] = (1. / 3.) * u.y[] + (2. / 3.) * uMed + (2. / 3.) * dt * (-(cf / 2.) * uMed * sqrt(sq(uMed)+sq(u.x[])) / h[]);
 
+//       uMed = u.x[] + dt *  (-(cf / 2.) * u.x[] * norm(u) / h[] + gp*So);
+//       u.x[] = (1. / 2.) * u.x[] + (1. / 2.) * uMed + (1. / 2.) * dt * (-(cf / 2.) * uMed * sqrt(sq(uMed)+sq(u.y[])) / h[] + gp*So);
+//
+//       uMed = u.y[] + dt *  (-(cf / 2.) * u.y[] * norm(u) / h[]);
+//       u.y[] = (1. / 2.) * u.y[] + (1. / 2.) * uMed + (1. / 2.) * dt * (-(cf / 2.) * uMed * sqrt(sq(uMed)+sq(u.x[])) / h[]);
+
+      uprev = u.x[];
       uMed = u.x[] + dt *  (-(cf / 2.) * u.x[] * norm(u) / h[] + gp*So);
       u.x[] = (1. / 2.) * u.x[] + (1. / 2.) * uMed + (1. / 2.) * dt * (-(cf / 2.) * uMed * sqrt(sq(uMed)+sq(u.y[])) / h[] + gp*So);
 
-      uMed = u.y[] + dt *  (-(cf / 2.) * u.y[] * norm(u) / h[]);
-      u.y[] = (1. / 2.) * u.y[] + (1. / 2.) * uMed + (1. / 2.) * dt * (-(cf / 2.) * uMed * sqrt(sq(uMed)+sq(u.x[])) / h[]);
+      uMed = u.y[] + dt *  (-(cf / 2.) * u.y[] * sqrt(sq(uprev)+sq(u.y[])) / h[]);
+      u.y[] = (1. / 2.) * u.y[] + (1. / 2.) * uMed + (1. / 2.) * dt * (-(cf / 2.) * uMed * sqrt(sq(uMed)+sq(uprev)) / h[]);
 
       if (h[]>hmax[]) {
         hmax[]=h[];
       }
   }
+
+  boundary({u});
 }
 
 // record max depth
@@ -188,6 +184,37 @@ event hmax(i+=25)
 //      fprintf(fp3, "%g %g %g %g \n", t, maxDepth, maxDepthLocX, maxDepthVel);
     fprintf(fp3, "%g %g %g \n", t, maxDepth, maxVel );
     fclose(fp3);
+}
+
+event outputFRLoc (i+=25)
+{
+  double frLocX = 0.0;
+//   double frLocY = 0.0;
+  double frDepth = normalDepth;
+  double frVel = normalVelocity;
+  FILE *fp4 = fopen("frMaxDepthVel", "a+");
+
+  foreach ()
+     {
+       if(h[]>=h[1,0] && h[]>=h[-1,0] && h[]>normalDepth*(1.0+0.4*disMag) && x>(0.80*normalVelocity*t) && x>frLocX)
+       {
+          frLocX = x;
+//           frLocY = y;
+          frDepth = h[];
+          frVel = norm(u);
+       }
+       // an ealier stage
+       else if (h[]>h[1,0] && h[-1,0]>h[] && h[1,0]<normalDepth*(1.0+0.01*disMag) && x>(0.80*normalVelocity*t) && x>frLocX )
+       {
+          frLocX = x;
+//           frLocY = y;
+          frDepth = h[];
+          frVel = norm(u);
+       }
+     }
+
+  fprintf(fp4, "%g %g %g %g \n", t, frLocX, frDepth, frVel);
+  fclose(fp4);
 }
 
 // event outputDrag(i++)
@@ -330,9 +357,9 @@ event fieldOutput(t = 0; t <= simTime; t += OUTPUTINTERVAL)
 // adaptivity
 event adapt(i++)
 {
-  astats s = adapt_wavelet({h, hmax, u}, (double[]){hemax, hmaxemax, uemax, uemax, uemax}, maxlevel = MAXMAXLEVEL, minlevel = MINLEVEL);
+  astats s = adapt_wavelet({h, hmax}, (double[]){hemax, hmaxemax}, maxlevel = MAXMAXLEVEL, minlevel = MINLEVEL);
   //fprintf(stderr, "# refined %d cells, coarsened %d cells\n", s.nf, s.nc);
 
   refine(t<=disPeriod*2.0 && y<=(distLength*1.6) && x<=(disPeriod*normalVelocity*2.5) && level<MAXMAXLEVEL);
-  refine(t<=disPeriod*2.0 && x<=(12.0*Lx/pow(2, MAXMAXLEVEL)) && level<MAXMAXLEVEL);
+  refine(t<=disPeriod*2.0 && x<=(10.0*Lx/pow(2, MAXMAXLEVEL)) && level<MAXMAXLEVEL);
 }
