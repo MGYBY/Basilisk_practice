@@ -7,7 +7,7 @@
 
 #define MAXLEVEL 9
 #define MINLEVEL 5
-#define MAXMAXLEVEL 14
+#define MAXMAXLEVEL 14 // maybe 15 is better
 
 // problem-sepcific parameters
 #define So 0.05011
