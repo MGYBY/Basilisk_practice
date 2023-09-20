@@ -7,7 +7,7 @@
 
 #define MAXLEVEL 9
 #define MINLEVEL 5
-#define MAXMAXLEVEL 14 // maybe 15 is better
+#define MAXMAXLEVEL 14
 
 // problem-sepcific parameters
 #define So 0.05011
@@ -189,31 +189,32 @@ event hmax(i+=25)
 event outputFRLoc (i+=25)
 {
   double frLocX = 0.0;
-//   double frLocY = 0.0;
+  double frLocY = 0.0;
   double frDepth = normalDepth;
   double frVel = normalVelocity;
   FILE *fp4 = fopen("frMaxDepthVel", "a+");
 
   foreach ()
      {
-       if(h[]>=h[1,0] && h[]>=h[-1,0] && h[]>normalDepth*(1.0+0.4*disMag) && x>(0.80*normalVelocity*t) && x>frLocX)
+       if(t>(disPeriod/4.0) && h[]>=h[1,0] && h[]>=h[-1,0] && h[]>normalDepth*(1.0+0.4*disMag) && x>(0.80*normalVelocity*t) && x>frLocX)
        {
           frLocX = x;
-//           frLocY = y;
+          frLocY = y;
           frDepth = h[];
           frVel = norm(u);
        }
        // an ealier stage
-       else if (h[]>h[1,0] && h[-1,0]>h[] && h[1,0]<normalDepth*(1.0+0.01*disMag) && x>(0.80*normalVelocity*t) && x>frLocX )
+       else if (t<=(disPeriod/4.0) && h[]>h[1,0] && h[-1,0]>h[] && h[1,0]<normalDepth*(1.0+0.01*disMag) && x>(0.80*normalVelocity*t) && x>frLocX )
        {
           frLocX = x;
-//           frLocY = y;
+          frLocY = y;
           frDepth = h[];
           frVel = norm(u);
        }
      }
 
-  fprintf(fp4, "%g %g %g %g \n", t, frLocX, frDepth, frVel);
+  if (frDepth>normalDepth*1.005)
+    fprintf(fp4, "%g %g %g %g %g \n", t, frLocX, frLocY, frDepth, frVel);
   fclose(fp4);
 }
 
