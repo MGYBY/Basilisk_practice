@@ -124,7 +124,7 @@ event properties (i++)
       #endif
       if (D2 > 0.) {
 //         double temp = muRef * exp((powerLawIndex - 1.) * log(D2 * pow(2,0.5)));
-        double temp = muRef * exp((powerLawIndex - 1.) * log(D2 * pow(2,0.5))) + tauP/(D2 * pow(2,0.5)+1.0e-15);
+        double temp = muRef * exp((powerLawIndex - 1.) * log(D2 * pow(2,0.5))) + tauP/((D2 * pow(2,0.5))+1.01e-16);
 //         double temp = muRef * exp((powerLawIndex - 1.) * log(D2));
 //         m = MUREF*exp ((N - 1.)*log (d2*pow(2,0.5)));
         muTemp = min(temp, mumax);
