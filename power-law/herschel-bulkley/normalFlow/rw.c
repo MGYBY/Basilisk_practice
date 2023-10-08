@@ -71,7 +71,7 @@ $$$$
 #define COEFFST (MUDRHO*pow(NORMALVEL,2.0)*NORMALDEPTH/WEBER)
 
 #define MAXTIME 40.0 // Maximum runtime.
-#define TOUTPUT 0.05
+#define TOUTPUT 0.25
 
 #define DISTAMP 0.0
 
@@ -106,6 +106,7 @@ $$$$
   u.t[embed] = neumann(0.);
 
 scalar fluidVel[];
+int j = 0;
 
 /** ### Main */
 int main()
@@ -121,7 +122,8 @@ int main()
   powerLawIndex = POWERLAWINDEX;
   tauP = YIELDSTRESS;
   muRef = MUMUD;
-  mumax = 500.0;
+  // bounded viscosity should be sufficiently large, otherwise the max velocity would be overestimated
+  mumax = 800.0;
 
   f.sigma = COEFFST;
 
@@ -185,16 +187,6 @@ event init (i=0)
     // avoid excessively large init file.
     // unrefine(y>topExtent*1.10 && level>MAXLEVEL-4);
 
-    
-
-//     jdx = 0;
-//     do {
-//       jdx += 1;
-//       fprintf(ferr, "Refining solid, %d\n", jdx );
-//     }
-//     while (adapt_wavelet ({cs}, (double[]){0.005}, MAXLEVEL, MINLEVEL).nf);
-//     mask (y > (NORMALDEPTH*4.01) ? top : none);
-//   }
 }
 
 /** ### Maximum run-time control and time & time-step logging */
@@ -212,33 +204,11 @@ event acceleration (i++) {
   }
 }
 
-// event drop_remove (i += 1) {
-//   remove_droplets (f, 2, 1e-4, false);
-//   remove_droplets (f, 2, 1e-4, true);
-// }
-
-// event timingLog(i += 10) {
-//   fprintf (stderr, "%d %g %g \n", i, t, dt);
-//   fflush (stderr);
-// }
-
 event iterLog(i += 5) {
   // FILE *fp1 = fopen("iterStat.txt", "a+");
   fprintf (ferr, "%d %g %g %d %d\n", i, t, dt, mgp.i, mgu.i);
   // fclose (fp1);
 }
-
-/** ### No AMR is used for now */
-//-------------------ADAPTIVITY---------------------//
-/*Adapt once on error in volume fraction, velocity field, and beach fraction*/
-// event adapt(i++) {
-//   //double uemax = 1e-5;
-//
-// //   double femax = 1e-3;
-//   double uemax = NORMALVEL/120.0;
-// //   adapt_wavelet ({f,u}, (double[]){femax,uemax,uemax,uemax}, MAXLEVEL, MINLEVEL);
-//   adapt_wavelet_leave_interface ((scalar *){u},{f}, (double[]){uemax,uemax,uemax}, MAXLEVEL, MINLEVEL, 1);
-// }
 
 /**
 ### Dump output, Gfs file output, free-surface output*/
@@ -247,34 +217,19 @@ event snapshot (t += TOUTPUT) {
   char nameOut[50], nameOutText[50];
   sprintf (nameOut, "dumpSnapshot-%g", t);
   dump(file=nameOut);
-
-  // text output
-  // sprintf(nameOutText, "slice-%g.txt", t);
-  // FILE *fp2 = fopen(nameOutText, "w");
-  // for (double yCoord = 0.0; yCoord <= xextent_; yCoord += (xextent_/ (pow(2, INITLEVEL))))
-  // {
-  //   fprintf(fp2, "%g %g %g\n", yCoord, interpolate(u.x, (xextent_/2.0), yCoord), interpolate(f, (xextent_/2.0), yCoord));
-  // }
-  // fclose(fp2);
-}
-
-event outputGfsFiles (t += TOUTPUT) {
-    char name[80];
-    sprintf(name, "out-%g.gfs", t);
-    FILE *fp = fopen(name, "w");
-    output_gfs(fp, translate = true);
-    fclose (fp);
 }
 
 event outputField (t += TOUTPUT) {
-    char nameField[40];
+    char nameField[40], nameSlice[40];
     sprintf(nameField, "field-%g.txt", t);
-    FILE *fp = fopen(nameField, "w");
-    foreach(serial)
-    {
-      fprintf(fp, "%g %g %g %g\n", x, y, f[], u.x[]);
-    }
-    fclose (fp);
+//     sprintf(nameSlice, "slice-%g.txt", t);
+    FILE *fp1 = fopen(nameField, "w");
+//     FILE *fp2 = fopen(nameSlice, "w");
+    output_field({f,u.x}, fp1, linear=true);
+//     for (j=1; j<30; j++)
+//       fprintf(fp2, "%g %g %g %g\n", (xextent_/2.0), (j*1.1*NORMALDEPTH/30.0), interpolate(u.x, (xextent_/2.0), (j*1.1*NORMALDEPTH/30.0), 0.0), interpolate(f, (xextent_/2.0), (j*1.1*NORMALDEPTH/30.0), 0.0));
+    fclose (fp1);
+//     fclose (fp2);
 }
 
 event globalMaxFluidVel(i+=25)
@@ -301,44 +256,7 @@ event outputInterface(t += TOUTPUT) {
   sprintf(command, "LC_ALL=C  cat interface* > ALLINTER-%g.dat",t);
   system(command);// allow to use linux command in the c code to concatenate our files
 
-//   char resultname[32];
-//   sprintf( resultname, "interface-%g.dat", t );
-//   FILE * fp = fopen(resultname, "w");
-//   foreach(serial)
-//     {
-//       scalar xpos[];
-//       scalar ypos[];
-//       position (f, xpos, {1, 0});
-//       position (f, ypos, {0, 1});
-//       if (xpos[] != nodata){
-// // 	fprintf (fp, "%g %g %g %g\n", x, y, xpos[], ypos[]);
-//         fprintf (fp, "%g %g \n", xpos[], ypos[]);
-//         // fclose (fp);
-//       }
-//     }
-//   fflush(fp);
 }
-
-// event outputCentVel(t += TOUTPUT) {
-//   char resultname[40];
-//   sprintf( resultname, "centVel_%g.txt", t );
-//   FILE * fp = fopen(resultname, "w");
-//   for (double y = 0.; y < xextent_; y += xextent_/pow(2.,LEVEL))
-//         fprintf (fp, "%g %g %g %g \n", y, interpolate (u.x, xextent_/2, y), interpolate (u.y, xextent_/2, y), interpolate (f, xextent_/2, y));
-//   fclose (fp);
-// }
-
-// mesh adaptation
-// event adapt (i++) {
-//   scalar omega[], KAPPA[];
-//   curvature(f, KAPPA);
-//   vorticity (u, omega);
-//   boundary ((scalar *){omega});
-// //   adapt_wavelet ((scalar *){f, u.x, u.y, KAPPA, omega}, (double[]){fErr, VelErr, VelErr, KAPPAErr, OmegaErr}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
-//   adapt_wavelet ((scalar *){f, u.x, u.y, omega, KAPPA}, (double[]){fErr, VelErr, VelErr, OmegaErr, KErr}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
-//   refine(y<=(10.10*xextent_/pow(2, MAXLEVEL)) && level<MAXLEVEL);
-// //   adapt_wavelet ((scalar *){f, cs}, (double[]){fErr, 0.01}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
-// }
 
 /**## Numerical Results */
 /**
