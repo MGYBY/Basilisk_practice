@@ -354,11 +354,17 @@ event dropletsAndhMax (i += 20)
 
 event depthAmplitude (i += 20) {
   FILE *fp2 = fopen("amplitude", "a+");
-  scalar pos[];
-  position (f, pos, {0,1});
-  double max = statsf(pos).max;
+  double ampY = 0.0;
+  foreach (reduction(max:ampY))
+  {
+    double yCoordInt = f[]>1.0e-3 && f[]<(1.0-1.0e-3) ? y : 0.0;
+    if (ampY<yCoordInt)
+    {
+      ampY = yCoordInt;
+    }
+  }
 
-  fprintf (fp2, "%g %g\n", t, max);
+  fprintf (fp2, "%g %g\n", t, ampY);
   fflush (fp2);
 }
 
