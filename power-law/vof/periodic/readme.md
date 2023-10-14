@@ -1,4 +1,7 @@
 Periodic power-law roll waves.
+
+The most updated one with consistent gravity is stored here: *[link](https://github.com/MGYBY/Basilisk_practice/tree/main/power-law/herschel-bulkley/periodic)*.
+
 * Validated 2D D2 calculation.
 * Controllable top location.
 * Serial or parallel run.
