@@ -123,8 +123,10 @@ event properties (i++)
         // exit (1);
       #endif
       if (D2 > 0.) {
+        D2 = max(1.01e-20, D2);
 //         double temp = muRef * exp((powerLawIndex - 1.) * log(D2 * pow(2,0.5)));
-        double temp = muRef * exp((powerLawIndex - 1.) * log( D2 * pow(2,0.5))) + tauP/((D2 * pow(2,0.5))+1.01e-16);
+        // double temp = muRef * exp((powerLawIndex - 1.) * log( D2 * pow(2,0.5))) + tauP/((D2 * pow(2,0.5))+1.01e-16);
+	double temp = muRef * exp((powerLawIndex - 1.) * log( D2 * pow(2,0.5))) + tauP/(D2 * pow(2,0.5));
 //         double temp = muRef * exp((powerLawIndex - 1.) * log(D2));
 //         m = MUREF*exp ((N - 1.)*log (d2*pow(2,0.5)));
         muTemp = min(temp, mumax);
