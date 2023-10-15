@@ -8,3 +8,4 @@ rm surf*.dat
 rm interfaceMed-*.dat
 rm perfs
 rm movie.mp4
+rm amplitude dropletDetail totalDroplets
