@@ -57,6 +57,7 @@ $$$$
 #define NORMALDEPTH 0.12986706
 #define NORMALVEL 0.22553941
 
+#define AIRRHO (MUDRHO/850.0) // 1.12
 #define AIRMU ((MUMUD*pow((NORMALVEL/NORMALDEPTH), (POWERLAWINDEX-1.0))+YIELDSTRESS/(NORMALVEL/NORMALDEPTH))/1.2e3)
 
 // inclination angle of the channel. \sin\theta and \cos\theta
