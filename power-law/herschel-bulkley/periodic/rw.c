@@ -89,6 +89,8 @@ $$$$
 #define KErr (1e-3)
 
 // #define mu(f)  (1./(clamp(f,0,1)*(1./mu1 - 1./mu2) + 1./mu2))
+// harmonic mean
+#define mu(muTemp, mu2, f)  (1./(clamp(f,0,1)/muTemp  + (1.-clamp(f,0,1))/mu2))
 
 /**
 ## Main body of the current codes
