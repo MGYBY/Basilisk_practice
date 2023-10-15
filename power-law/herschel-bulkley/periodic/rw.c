@@ -53,13 +53,11 @@ $$$$
 #define MUMUD 74.60
 #define YIELDSTRESS 0.00
 
-#define AIRRHO (MUDRHO/850.0) // 1.12
-// #define AIRMU (MUMUD/50.0)
-#define AIRMU 0.001
-
 // expected analytical solutions for depth and depth-averaged velocity, but we start simulation with fluid at rest.
 #define NORMALDEPTH 0.12986706
 #define NORMALVEL 0.22553941
+
+#define AIRMU ((MUMUD*pow((NORMALVEL/NORMALDEPTH), (POWERLAWINDEX-1.0))+YIELDSTRESS/(NORMALVEL/NORMALDEPTH))/1.2e3)
 
 // inclination angle of the channel. \sin\theta and \cos\theta
 #define CHANNELSLOPE 0.060 // sinTheta
@@ -81,6 +79,7 @@ $$$$
 // square domain size
 #define xextent_ (6.0*NORMALDEPTH/CHANNELTAN)
 #define topExtent (NORMALDEPTH*3.600)
+#define initTransitCells 6
 
 // #define KAPPAErr (1e-3)
 #define OmegaErr (2.00)
@@ -175,8 +174,9 @@ event init (i=0)
       foreach() {
         // variation of x-component velocity to keep discharge the same
         // u.x[] = y<=distSurf(x) ? (FR*sqrt(CHANNELCOS*GRAV*distSurf(x)))*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX))*(1.0-pow((1.0-y/distSurf(x)), (1.0+POWERLAWINDEX)/POWERLAWINDEX)) : (FR*sqrt(CHANNELCOS*GRAV*distSurf(x)))*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX));
-        u.x[] = (y<=topExtent*1.10) ? y<=distSurf(x) ? (FR*sqrt(CHANNELCOS*GRAV*distSurf(x)))*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX))*(1.0-pow((1.0-y/distSurf(x)), (1.0+POWERLAWINDEX)/POWERLAWINDEX)) : (FR*sqrt(CHANNELCOS*GRAV*distSurf(x)))*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX)) : 0.0;
-        // u.x[] = 0.0;
+        // u.x[] = (y<=topExtent*1.10) ? y<=distSurf(x) ? (FR*sqrt(CHANNELCOS*GRAV*distSurf(x)))*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX))*(1.0-pow((1.0-y/distSurf(x)), (1.0+POWERLAWINDEX)/POWERLAWINDEX)) : (FR*sqrt(CHANNELCOS*GRAV*distSurf(x)))*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX)) : 0.0;
+            u.x[] = (y<=topExtent*1.0) ? y<=distSurf(x) ? (FR*sqrt(CHANNELCOS*GRAV*distSurf(x)))*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX))*(1.0-pow((1.0-y/distSurf(x)), (1.0+POWERLAWINDEX)/POWERLAWINDEX)) : (y<=(distSurf(x)+initTransitCells*xextent_/pow(2, MAXLEVEL))) ? (FR*sqrt(CHANNELCOS*GRAV*distSurf(x)))*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX))*(((initTransitCells*xextent_/pow(2, MAXLEVEL))-y+xextent_/pow(2, MAXLEVEL))/(initTransitCells*xextent_/pow(2, MAXLEVEL))) : 0.0 : 0.0;
+  // u.x[] = 0.0;
         u.y[] = 0.0;
         // hydrostatic pressure, zero pressure datum at free-surface
         p[] = (y<=distSurf(x)) ? MUDRHO*CHANNELCOS*GRAV*(distSurf(x)-y) : (-1.0)*CHANNELCOS*GRAV*AIRRHO*(y-distSurf(x));
@@ -393,7 +393,7 @@ event adapt (i++) {
 /**## Numerical Results */
 /**
  <span style="color:red"> **The fluid stays stationary ($u_x(t)=u_y(t)=0$), which is apparently different from the analytical solutions and it is not reasonable at all. Why??** </span>*/
-event movies (i += 50) {
+event movies (i += 25) {
   view (quat = {0.000, 0.000, 0.000, 1.000},
       fov = 30, near = 0.01, far = 1000,
       tx = -0.493, ty = -0.012, tz = -1.106,
