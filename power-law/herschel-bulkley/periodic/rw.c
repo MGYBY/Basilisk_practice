@@ -335,6 +335,18 @@ event dropletsAndhMax (i += 20)
 // 	b[j].x += dv()*f[]*p.x;
     }
 
+  foreach(serial)
+  {
+    volDroplet[] = 0.0;
+    if (m[] > 0) {
+      int j = m[] - 1;
+      volDroplet[] = v[j];
+//       coord p = {x,y,z};
+//       foreach_dimension()
+// 	b[j].x += dv()*f[]*p.x;
+    }
+  }
+
  /**
  When using MPI we need to perform a global reduction to get the
  volumes and positions of droplets which span multiple processes. */
@@ -360,14 +372,14 @@ event depthAmplitude (i += 20) {
   double ampY = 0.0;
   foreach (reduction(max:ampY))
   {
-    double yCoordInt = f[]>1.0e-3 && f[]<(1.0-1.0e-3) ? y : 0.0;
+    double yCoordInt = f[]>1.0e-12 && volDroplet[]>(16.50*sq(xextent_/pow(2, MAXLEVEL))) ? y : 0.0;
     if (ampY<yCoordInt)
     {
       ampY = yCoordInt;
     }
   }
-
-  fprintf (fp2, "%g %g\n", t, ampY);
+  fprintf (fp2, "%g %g \n", t, ampY);
+  fprintf (ferr, "%g %g \n", t, ampY);
   fflush (fp2);
 }
 
