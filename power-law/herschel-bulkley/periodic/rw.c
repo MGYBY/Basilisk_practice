@@ -110,6 +110,8 @@ $$$$
   u.n[embed] = dirichlet(0.);
   u.t[embed] = neumann(0.);
 
+scalar volDroplet[];
+
 /** ### Main */
 int main()
 {
