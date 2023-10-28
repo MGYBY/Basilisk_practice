@@ -122,7 +122,7 @@ double inletDistVel(double yCoord, double timeVal)
   else if (yCoord<=distDepth)
     return (umax);
   else if (yCoord<=distDepth+initTransitCells*xextent_/pow(2,MAXLEVEL))
-    return (umax*(distDepth+initTransitCells*xextent_/pow(2,MAXLEVEL)-y)/(initTransitCells*xextent_/pow(2,MAXLEVEL)));
+    return (umax*(distDepth+initTransitCells*xextent_/pow(2,MAXLEVEL)-yCoord)/(initTransitCells*xextent_/pow(2,MAXLEVEL)));
   else
     return 0.0;
 }
