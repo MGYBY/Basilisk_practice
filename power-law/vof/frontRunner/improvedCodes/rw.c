@@ -446,7 +446,7 @@ event maintainNormalDepth1 (i=1; i<=3; i++) {
 event maintainNormalDepth2 (i=3; i+=80) {
   double ampY = 0.0;
   double frLoc = 0.0;
-  foreach (reduction(max:ampY))
+  foreach (reduction(max:ampY) reduction(max:frLoc))
   {
     double yCoordInt = volDroplet[]>(16.10*sq(xextent_/pow(2, MAXLEVEL))) ? y+0.50*(xextent_/pow(2, MAXLEVEL))-(1-f[])*(xextent_/pow(2, MAXLEVEL)) : 0.0;
     if (ampY<yCoordInt)
@@ -455,6 +455,19 @@ event maintainNormalDepth2 (i=3; i+=80) {
       frLoc = x;
     }
   }
+
+  foreach() {
+    if(x>=1.1*frLoc)
+    {
+      if (y+xextent_/pow(2, MAXLEVEL)/2.0<=NORMALDEPTH)
+        f[] = 1.0;
+      else if (y+xextent_/pow(2, MAXLEVEL)/2.0>NORMALDEPTH && y-xextent_/pow(2, MAXLEVEL)/2.0<=NORMALDEPTH)
+        f[] = (NORMALDEPTH-(y-xextent_/pow(2, MAXLEVEL)/2.0))/(xextent_/pow(2, MAXLEVEL));
+      else
+        f[] = 0.0;
+    }
+  }
+}
 
   foreach() {
     if(x>=1.1*frLoc)
