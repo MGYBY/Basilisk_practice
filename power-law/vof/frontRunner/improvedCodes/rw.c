@@ -115,7 +115,16 @@ double inletDistDepth(double timeVal, double yCoord, double del)
 double inletDistVel(double yCoord, double timeVal)
 {
   double distDepth = (timeVal<=DISTPERIOD/2.0) ? NORMALDEPTH*(1.0+DISTAMP*sin(2*pi*timeVal/DISTPERIOD)) : NORMALDEPTH;
-  return (yCoord<=(distDepth) ? FR*sqrt(CHANNELCOS*GRAV*distDepth)*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX))*(1.0-pow((1.0-yCoord/distDepth), (1.0+POWERLAWINDEX)/POWERLAWINDEX)) : FR*sqrt(CHANNELCOS*GRAV*distDepth)*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX))*1.0);
+  double bParam = YIELDSTRESS/(MUDRHO*GRAVRED*NORMALDEPTH*CHANNELSLOPE);
+  double umax = (timeVal<=DISTPERIOD/2.0) ? sqrt(1.0+DISTAMP*sin(2*pi*timeVal/DISTPERIOD))*NORMALVEL*(1.0/(1.0-POWERLAWINDEX/(2.0*POWERLAWINDEX+1.0)*(1.0-bParam))) : NORMALVEL*(1.0/(1.0-POWERLAWINDEX/(2.0*POWERLAWINDEX+1.0)*(1.0-bParam)));
+  if (yCoord<=bParam*distDepth)
+    return (umax*(1-pow((1.0-yCoord/(bParam*distDepth)), (POWERLAWINDEX+1.0)/POWERLAWINDEX)));
+  else if (yCoord<=distDepth)
+    return (umax);
+  else if (yCoord<=distDepth+initTransitCells*xextent_/pow(2,MAXLEVEL))
+    return (umax*(distDepth+initTransitCells*xextent_/pow(2,MAXLEVEL)-y)/(initTransitCells*xextent_/pow(2,MAXLEVEL)));
+  else
+    return 0.0;
 }
 
 /**
@@ -200,9 +209,15 @@ double distSurf(double xCoord)
   return (NORMALDEPTH);
 }
 
-double normalFlowVel(double yCoord)
+double normalFlowVel(double yCoord, double depth)
 {
-  return (FR*sqrt(CHANNELCOS*GRAV*NORMALDEPTH)*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX))*(1.0-pow((1.0-yCoord/NORMALDEPTH), (1.0+POWERLAWINDEX)/POWERLAWINDEX)));
+  double bParam = YIELDSTRESS/(MUDRHO*GRAVRED*NORMALDEPTH*CHANNELSLOPE);
+  double umax = NORMALVEL*(1.0/(1.0-POWERLAWINDEX/(2.0*POWERLAWINDEX+1.0)*(1.0-bParam)));
+  if (yCoord<=bParam*depth)
+    return (umax*(1-pow((1.0-yCoord/(bParam*depth)), (POWERLAWINDEX+1.0)/POWERLAWINDEX)));
+  else
+    return (umax);
+//   return (FR*sqrt(CHANNELCOS*GRAV*NORMALDEPTH)*((1.0+2.0*POWERLAWINDEX)/(1.0+POWERLAWINDEX))*(1.0-pow((1.0-yCoord/NORMALDEPTH), (1.0+POWERLAWINDEX)/POWERLAWINDEX)));
 }
 
 /** ### Init event */
@@ -228,7 +243,7 @@ event init (i=0)
 
       foreach() {
         // variation of x-component velocity to keep discharge the same
-        u.x[] = (y<=topExtent*1.10) ? (y<=NORMALDEPTH ? normalFlowVel(y) : (y<=(NORMALDEPTH+initTransitCells*xextent_/pow(2,MAXLEVEL)) ? (normalFlowVel(NORMALDEPTH)*(NORMALDEPTH+initTransitCells*xextent_/pow(2,MAXLEVEL)-y)/(initTransitCells*xextent_/pow(2,MAXLEVEL))) : 0.0)) : 0.0;
+        u.x[] = (y<=topExtent*1.10) ? (y<=NORMALDEPTH ? normalFlowVel(y, NORMALDEPTH) : (y<=(NORMALDEPTH+initTransitCells*xextent_/pow(2,MAXLEVEL)) ? (normalFlowVel(NORMALDEPTH, NORMALDEPTH)*(NORMALDEPTH+initTransitCells*xextent_/pow(2,MAXLEVEL)-y)/(initTransitCells*xextent_/pow(2,MAXLEVEL))) : 0.0)) : 0.0;
         // u.x[] = 0.0;
         u.y[] = 0.0;
         // hydrostatic pressure, zero pressure datum at free-surface
