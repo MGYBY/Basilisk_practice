@@ -49,13 +49,13 @@ $$$$
 
 #define MUDRHO 1437.25 //density ratio, water to air
 // #define MURATIO 8.9e-4/17.4e-6 //dynamic viscosity ratio, water to air
-#define POWERLAWINDEX 0.129
-#define MUMUD 76.80
-#define YIELDSTRESS 0.00
+#define POWERLAWINDEX 0.333333
+#define MUMUD 17.80
+#define YIELDSTRESS 52.80
 
 // expected analytical solutions for depth and depth-averaged velocity, but we start simulation with fluid at rest.
-#define NORMALDEPTH 0.15463298
-#define NORMALVEL 0.98442807
+#define NORMALDEPTH 0.14171092
+#define NORMALVEL 0.94239848
 
 #define AIRRHO (MUDRHO/500.0) // 1.12
 // #define AIRMU (MUMUD/50.0)
@@ -82,7 +82,7 @@ $$$$
 // square domain size
 #define xextent_ (1080*NORMALDEPTH)
 #define topExtent (NORMALDEPTH*4.125)
-#define initTransitCells 20
+#define initTransitCells 24
 
 // #define KAPPAErr (1e-3)
 #define OmegaErr (1.00)
@@ -117,8 +117,17 @@ double inletDistVel(double yCoord, double timeVal)
   double distDepth = (timeVal<=DISTPERIOD/2.0) ? NORMALDEPTH*(1.0+DISTAMP*sin(2*pi*timeVal/DISTPERIOD)) : NORMALDEPTH;
   double bParam = YIELDSTRESS/(MUDRHO*GRAVRED*NORMALDEPTH*CHANNELSLOPE);
   double umax = (timeVal<=DISTPERIOD/2.0) ? sqrt(1.0+DISTAMP*sin(2*pi*timeVal/DISTPERIOD))*NORMALVEL*(1.0/(1.0-POWERLAWINDEX/(2.0*POWERLAWINDEX+1.0)*(1.0-bParam))) : NORMALVEL*(1.0/(1.0-POWERLAWINDEX/(2.0*POWERLAWINDEX+1.0)*(1.0-bParam)));
-  if (yCoord<=bParam*distDepth)
-    return (umax*(1-pow((1.0-yCoord/(bParam*distDepth)), (POWERLAWINDEX+1.0)/POWERLAWINDEX)));
+//   if (yCoord<=bParam*distDepth)
+//     return (umax*(1-pow((1.0-yCoord/(bParam*distDepth)), (POWERLAWINDEX+1.0)/POWERLAWINDEX)));
+//   else if (yCoord<=distDepth)
+//     return (umax);
+//   else if (yCoord<=distDepth+initTransitCells*xextent_/pow(2,MAXLEVEL))
+//     return (umax*(distDepth+initTransitCells*xextent_/pow(2,MAXLEVEL)-yCoord)/(initTransitCells*xextent_/pow(2,MAXLEVEL)));
+//   else
+//     return 0.0;
+
+  if (yCoord<=bParam*NORMALDEPTH)
+    return (umax*(1-pow((1.0-yCoord/(bParam*NORMALDEPTH)), (POWERLAWINDEX+1.0)/POWERLAWINDEX)));
   else if (yCoord<=distDepth)
     return (umax);
   else if (yCoord<=distDepth+initTransitCells*xextent_/pow(2,MAXLEVEL))
@@ -174,7 +183,7 @@ int main()
 
   powerLawIndex = POWERLAWINDEX;
   muRef = MUMUD;
-  mumax = 99.0;
+  mumax = 109.999;
 
   f.sigma = COEFFST;
 
@@ -203,11 +212,11 @@ int main()
 }
 
 //---------------------INITIALIZATION------------------------//
-double distSurf(double xCoord)
-{
-  // return (NORMALDEPTH*(1.0+DISTAMP*sin(2.0*pi*xCoord/xextent_)));
-  return (NORMALDEPTH);
-}
+// double distSurf(double xCoord)
+// {
+//   // return (NORMALDEPTH*(1.0+DISTAMP*sin(2.0*pi*xCoord/xextent_)));
+//   return (NORMALDEPTH);
+// }
 
 double normalFlowVel(double yCoord, double depth)
 {
@@ -472,7 +481,9 @@ event maintainNormalDepth2 (i=3; i+=80) {
   }
 
   foreach() {
-    if(x>=1.1*frLoc)
+    if (t>DISTPERIOD/2.0)
+    {
+    if(x>=1.10*frLoc)
     {
       if (y+xextent_/pow(2, MAXLEVEL)/2.0<=NORMALDEPTH)
         f[] = 1.0;
@@ -481,18 +492,18 @@ event maintainNormalDepth2 (i=3; i+=80) {
       else
         f[] = 0.0;
     }
-  }
-}
-
-  foreach() {
-    if(x>=1.1*frLoc)
+    }
+    else
     {
-      if (y+xextent_/pow(2, MAXLEVEL)/2.0<=NORMALDEPTH)
-        f[] = 1.0;
-      else if (y+xextent_/pow(2, MAXLEVEL)/2.0>NORMALDEPTH && y-xextent_/pow(2, MAXLEVEL)/2.0<=NORMALDEPTH)
-        f[] = (NORMALDEPTH-(y-xextent_/pow(2, MAXLEVEL)/2.0))/(xextent_/pow(2, MAXLEVEL));
-      else
-        f[] = 0.0;
+      if(x>=xextent_/20.0 && x>=3.0*frLoc)
+      {
+        if (y+xextent_/pow(2, MAXLEVEL)/2.0<=NORMALDEPTH)
+          f[] = 1.0;
+        else if (y+xextent_/pow(2, MAXLEVEL)/2.0>NORMALDEPTH && y-xextent_/pow(2, MAXLEVEL)/2.0<=NORMALDEPTH)
+          f[] = (NORMALDEPTH-(y-xextent_/pow(2, MAXLEVEL)/2.0))/(xextent_/pow(2, MAXLEVEL));
+        else
+          f[] = 0.0;
+      }
     }
   }
 }
