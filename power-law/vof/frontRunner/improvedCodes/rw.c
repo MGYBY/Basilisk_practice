@@ -561,7 +561,7 @@ event depthAmplitude (i += 25) {
   }
 
   frFrVal = frAveVel/(pow(GRAVRED*ampY, 0.50)+1.0E-25);
-  frReVal = 1.0/((YIELDSTRESS/(2.0*MUDRHO*pow(frAveVel, 2.0)))+(MUMUD/(MUDRHO*pow(ampY, POWERLAWINDEX)*pow(frAveVel, (2.0-POWERLAWINDEX)))));
+  frReVal = 1.0/((YIELDSTRESS/(2.0*MUDRHO*pow(frAveVel, 2.0)+1.0E-26))+(MUMUD/(MUDRHO*pow(ampY, POWERLAWINDEX)*pow(frAveVel, (2.0-POWERLAWINDEX))+1.0E-26)));
 
   fprintf (fp6, "%g %g \n", t, frFrVal);
   fprintf (fp7, "%g %g \n", t, frReVal);
