@@ -463,7 +463,7 @@ event depthAmplitude (i += 25) {
   double frAveVel = 0.0;
   int np = 90;
   // coord c[np];
-  double depthAveArray[np];
+  // double depthAveArray[np];
 
   FILE *fp5 = fopen("amplitude", "a+");
   FILE *fp3 = fopen("totalDroplets", "a");
