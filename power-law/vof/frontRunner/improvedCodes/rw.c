@@ -538,7 +538,6 @@ event depthAmplitude (i += 25) {
     if (ampY<yCoordInt)
     {
       ampY = yCoordInt;
-      frLoc = x;
     }
   }
 
