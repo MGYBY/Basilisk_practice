@@ -376,11 +376,103 @@ event outputInterface(t += TOUTPUT) {
 //   fflush(fp);
 }
 
-event dropletsAndhMax (i += 20)
-{
+// event dropletsAndhMax (i += 20)
+// {
+//   FILE *fp3 = fopen("totalDroplets", "a");
+//   FILE *fp4 = fopen("dropletDetail", "a");
+
+//   scalar m[];
+//   foreach()
+//     m[] = f[] > 1e-3;
+//   int n = tag (m);
+
+//   /**
+//   Once each cell is tagged with a unique droplet index, we can easily
+//   compute the volume *v* and position *b* of each droplet. Note that
+//   we use *foreach (serial)* to avoid doing a parallel traversal when
+//   using OpenMP. This is because we don't have reduction operations for
+//   the *v* and *b* arrays (yet). */
+
+//   double v[n];
+// //   coord b[n];
+//   for (int j = 0; j < n; j++)
+// //     v[j] = b[j].x = b[j].y = b[j].z = 0.;
+//     v[j] = 0.;
+//   foreach (serial)
+//     if (m[] > 0) {
+//       int j = m[] - 1;
+//       v[j] += dv()*f[];
+// //       coord p = {x,y,z};
+// //       foreach_dimension()
+// // 	b[j].x += dv()*f[]*p.x;
+//     }
+
+//   foreach(serial)
+//   {
+//     volDroplet[] = 0.0;
+//     if (m[] > 0) {
+//       int j = m[] - 1;
+//       volDroplet[] = v[j];
+// //       coord p = {x,y,z};
+// //       foreach_dimension()
+// // 	b[j].x += dv()*f[]*p.x;
+//     }
+//   }
+
+//  /**
+//  When using MPI we need to perform a global reduction to get the
+//  volumes and positions of droplets which span multiple processes. */
+
+// #if _MPI
+//   MPI_Allreduce (MPI_IN_PLACE, v, n, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+// //   MPI_Allreduce (MPI_IN_PLACE, b, 3*n, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+// #endif
+
+//   /**
+//   Finally we output the volume and position of each droplet to
+//   standard output. */
+
+//   fprintf (fp3, "%g %d \n", t, n);
+//   for (int j = 0; j < n; j++)
+//     fprintf (fp4, "%g %d %g \n", t, j, v[j]);
+//   fclose (fp3);
+//   fclose (fp4);
+// }
+
+// event depthAmplitude (i += 20) {
+//   FILE *fp5 = fopen("amplitude", "a+");
+//   double ampY = 0.0;
+//   foreach (reduction(max:ampY))
+//   {
+//     double yCoordInt = volDroplet[]>(16.10*sq(xextent_/pow(2, MAXLEVEL))) ? y+0.50*(xextent_/pow(2, MAXLEVEL))-(1-f[])*(xextent_/pow(2, MAXLEVEL)) : 0.0;
+//     if (ampY<yCoordInt)
+//     {
+//       ampY = yCoordInt;
+//     }
+//   }
+//   fprintf (fp5, "%g %g \n", t, ampY);
+// //   fprintf (ferr, "%g %g \n", t, ampY);
+//   fclose (fp5);
+// }
+
+event depthAmplitude (i += 25) {
+  double ampY = 0.0; // essentially fr depth
+  double frLoc = 0.0;
+  double frFrVal = 0.0;
+  double frReVal = 0.0;
+  double frAveVel = 0.0;
+  int np = 90;
+  // coord c[np];
+  double depthAveArray[np];
+
+  FILE *fp5 = fopen("amplitude", "a+");
   FILE *fp3 = fopen("totalDroplets", "a");
   FILE *fp4 = fopen("dropletDetail", "a");
 
+  FILE *fp6 = fopen("frFr", "a");
+  FILE *fp7 = fopen("frRe", "a");
+
+  // first calculate droplet statistics
   scalar m[];
   foreach()
     m[] = f[] > 1e-3;
@@ -437,44 +529,12 @@ event dropletsAndhMax (i += 20)
     fprintf (fp4, "%g %d %g \n", t, j, v[j]);
   fclose (fp3);
   fclose (fp4);
-}
 
-event depthAmplitude (i += 20) {
-  FILE *fp5 = fopen("amplitude", "a+");
-  double ampY = 0.0;
+
+  // amp and amp location
   foreach (reduction(max:ampY))
   {
-    double yCoordInt = volDroplet[]>(16.10*sq(xextent_/pow(2, MAXLEVEL))) ? y+0.50*(xextent_/pow(2, MAXLEVEL))-(1-f[])*(xextent_/pow(2, MAXLEVEL)) : 0.0;
-    if (ampY<yCoordInt)
-    {
-      ampY = yCoordInt;
-    }
-  }
-  fprintf (fp5, "%g %g \n", t, ampY);
-//   fprintf (ferr, "%g %g \n", t, ampY);
-  fclose (fp5);
-}
-
-event maintainNormalDepth1 (i=1; i<=3; i++) {
-  foreach() {
-    if(x>5.0*xextent_/pow(2,MAXLEVEL))
-    {
-      if (y+xextent_/pow(2, MAXLEVEL)/2.0<=NORMALDEPTH)
-        f[] = 1.0;
-      else if (y+xextent_/pow(2, MAXLEVEL)/2.0>NORMALDEPTH && y-xextent_/pow(2, MAXLEVEL)/2.0<=NORMALDEPTH)
-        f[] = (NORMALDEPTH-(y-xextent_/pow(2, MAXLEVEL)/2.0))/(xextent_/pow(2, MAXLEVEL));
-      else
-        f[] = 0.0;
-    }
-  }
-}
-
-event maintainNormalDepth2 (i=3; i+=80) {
-  double ampY = 0.0;
-  double frLoc = 0.0;
-  foreach (reduction(max:ampY) reduction(max:frLoc))
-  {
-    double yCoordInt = volDroplet[]>(16.10*sq(xextent_/pow(2, MAXLEVEL))) ? y+0.50*(xextent_/pow(2, MAXLEVEL))-(1-f[])*(xextent_/pow(2, MAXLEVEL)) : 0.0;
+    double yCoordInt = volDroplet[]>(19.99*sq(xextent_/pow(2, MAXLEVEL))) ? y+0.50*(xextent_/pow(2, MAXLEVEL))-(1-f[])*(xextent_/pow(2, MAXLEVEL)) : 0.0;
     if (ampY<yCoordInt)
     {
       ampY = yCoordInt;
@@ -482,32 +542,33 @@ event maintainNormalDepth2 (i=3; i+=80) {
     }
   }
 
-  foreach() {
-    if (t>DISTPERIOD/2.0)
+  foreach (rreduction(max:frLoc))
+  {
+    double yCoordInt = volDroplet[]>(19.99*sq(xextent_/pow(2, MAXLEVEL))) ? y+0.50*(xextent_/pow(2, MAXLEVEL))-(1-f[])*(xextent_/pow(2, MAXLEVEL)) : 0.0;
+    if (ampY*0.99<yCoordInt)
     {
-    if(x>=1.10*frLoc)
-    {
-      if (y+xextent_/pow(2, MAXLEVEL)/2.0<=NORMALDEPTH)
-        f[] = 1.0;
-      else if (y+xextent_/pow(2, MAXLEVEL)/2.0>NORMALDEPTH && y-xextent_/pow(2, MAXLEVEL)/2.0<=NORMALDEPTH)
-        f[] = (NORMALDEPTH-(y-xextent_/pow(2, MAXLEVEL)/2.0))/(xextent_/pow(2, MAXLEVEL));
-      else
-        f[] = 0.0;
-    }
-    }
-    else
-    {
-      if(x>=xextent_/20.0 && x>=3.0*frLoc)
-      {
-        if (y+xextent_/pow(2, MAXLEVEL)/2.0<=NORMALDEPTH)
-          f[] = 1.0;
-        else if (y+xextent_/pow(2, MAXLEVEL)/2.0>NORMALDEPTH && y-xextent_/pow(2, MAXLEVEL)/2.0<=NORMALDEPTH)
-          f[] = (NORMALDEPTH-(y-xextent_/pow(2, MAXLEVEL)/2.0))/(xextent_/pow(2, MAXLEVEL));
-        else
-          f[] = 0.0;
-      }
+      frLoc = x;
     }
   }
+
+  fprintf (fp5, "%g %g %g \n", t, frLoc, ampY);
+//   fprintf (ferr, "%g %g \n", t, ampY);
+  fclose (fp5);
+
+  // depth-average frontal properties
+  for (int l = 1; l <= np; l++)
+  {
+    frAveVel += interpolate(f, frLoc, (ampY*1.10)/np*l, 0.0)*interpolate(u.x, frLoc, (ampY*1.10)/np*l, 0.0)/np;
+  }
+
+  frFrVal = frAveVel/(pow(GRAVRED*ampY, 0.50)+1.0E-25);
+  frReVal = 1.0/((YIELDSTRESS/(2.0*MUDRHO*pow(frAveVel, 2.0)))+(MUMUD/(MUDRHO*pow(ampY, POWERLAWINDEX)*pow(frAveVel, (2.0-POWERLAWINDEX)))));
+
+  fprintf (fp6, "%g %g \n", t, frFrVal);
+  fprintf (fp7, "%g %g \n", t, frReVal);
+
+  fclose (fp6);
+  fclose (fp7);
 }
 
 // event outputCentVel(t += TOUTPUT) {
