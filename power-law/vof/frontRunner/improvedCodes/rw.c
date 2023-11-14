@@ -541,7 +541,7 @@ event depthAmplitude (i += 25) {
     }
   }
 
-  foreach (rreduction(max:frLoc))
+  foreach (reduction(max:frLoc))
   {
     double yCoordInt = volDroplet[]>(19.99*sq(xextent_/pow(2, MAXLEVEL))) ? y+0.50*(xextent_/pow(2, MAXLEVEL))-(1-f[])*(xextent_/pow(2, MAXLEVEL)) : 0.0;
     if (ampY*0.99<yCoordInt)
