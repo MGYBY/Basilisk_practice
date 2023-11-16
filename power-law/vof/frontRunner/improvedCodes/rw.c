@@ -20,6 +20,7 @@ $$$$
 #include "./adapt_wavelet_leave_interface_limited.h"
 #include "embed.h"
 #include "navier-stokes/centered.h"
+// #define FILTERED
 #include "two-phasePL.h"
 // #include "./myTension.h"
 #include "tension.h"
@@ -30,8 +31,6 @@ $$$$
 // #include "reduced.h"
 #include "view.h"
 #include "tag.h"
-
-// #define FILTERED
 
 /**
    Include profiling information. */
@@ -328,7 +327,7 @@ event iterLog(i += 5) {
 event snapshot (t += TOUTPUT) {
   char nameOut[50], nameOutText[50];
   sprintf (nameOut, "dumpSnapshot-%g", t);
-  dump(file=nameOut);
+  dump(file=nameOut, list={f, u.x, u.y, uf.x, uf.y, p, omega});
 
   // text output
   // sprintf(nameOutText, "slice-%g.txt", t);
@@ -344,7 +343,7 @@ event outputGfsFiles (t += TOUTPUT) {
     char name[80];
     sprintf(name, "out-%g.gfs", t);
     FILE *fp1 = fopen(name, "w");
-    output_gfs(fp1, translate = true);
+    output_gfs(fp1, translate = true, list={f, u.x, u.y, uf.x, uf.y, p, omega});
     fclose (fp1);
 }
 
