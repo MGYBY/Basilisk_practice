@@ -62,7 +62,7 @@ $$$$
 
 // inclination angle of the channel. \sin\theta and \cos\theta
 #define CHANNELTAN (0.06*5.0)
-#define CHANNELSLOPE (pow((CHANNELTAN*CHANNELTAN/(1.0+CHANNELTAN+CHANNELTAN)), 0.50)) // sinTheta
+#define CHANNELSLOPE (pow((CHANNELTAN*CHANNELTAN/(1.0+CHANNELTAN*CHANNELTAN)), 0.50)) // sinTheta
 #define CHANNELCOS (pow((1.0-pow(CHANNELSLOPE,2.0)),0.50))
 
 #define GRAV 9.81
