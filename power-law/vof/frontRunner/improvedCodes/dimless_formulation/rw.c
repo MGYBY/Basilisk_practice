@@ -204,8 +204,8 @@ double distVel(double xCoord, double yCoord)
 //   else
 //     return 0.0;
 
-  if (yCoord<=BPARAM*NORMALDEPTH)
-    return (umax*(1-pow((1.0-yCoord/(BPARAM*NORMALDEPTH)), (POWERLAWINDEX+1.0)/POWERLAWINDEX)));
+  if (yCoord<=(1.0-BPARAM)*NORMALDEPTH)
+    return (umax*(1-pow((1.0-yCoord/((1.0-BPARAM)*NORMALDEPTH)), (POWERLAWINDEX+1.0)/POWERLAWINDEX)));
   else if (yCoord<=distDepth)
     return (umax);
   else if (yCoord<=distDepth+initTransitCells*xextent_/pow(2,MAXLEVEL))
