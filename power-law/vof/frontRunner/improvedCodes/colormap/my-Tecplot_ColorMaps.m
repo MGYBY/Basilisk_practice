@@ -20,8 +20,13 @@ fid = fopen(outname,'w');
 %         error('cant open map file')
 %     end
 [map_row, map_col] = size(map);
-num_control_points = round(map_row/10);
-total_cp = num_control_points+1;
+num_control_points = floor(map_row/8);
+if (mod(map_row, 8)~=0)
+    total_cp = num_control_points+1;
+else
+    total_cp = num_control_points+2;
+end
+
 fprintf(fid, '#!MC 900\n$!COLORMAP\n  CONTOURCOLORMAP = USERDEF\n');
 fprintf(fid, '$!COLORMAPCONTROL RESETTOFACTORY\n$!COLORMAP\n  USERDEFINED\n');
 fprintf(fid, '    {\n    NUMCONTROLPOINTS = %d\n', total_cp);
@@ -49,10 +54,10 @@ for i = 1:1:num_control_points
     if round(map_row*(i/num_control_points)) < 1
         current_row = 1;
     else
-    current_row = round(map_row*(i/num_control_points));
+    current_row = round(map_row*(i/total_cp));
     end
     fprintf(fid, '    CONTROLPOINT %d\n',i+1);
-    fprintf(fid, '      {\n      COLORMAPFRACTION = %f\n',i/num_control_points);
+    fprintf(fid, '      {\n      COLORMAPFRACTION = %f\n',i/total_cp);
     fprintf(fid, '      LEADRGB\n');
     fprintf(fid, '        {\n');
     fprintf(fid, '        R = %d\n',round(map(current_row,1)*255));
@@ -68,27 +73,25 @@ for i = 1:1:num_control_points
     fprintf(fid, '      }\n');
 end
     
-    % the last point
-%     fprintf(fid, '    CONTROLPOINT %d\n', total_cp);
-%     fprintf(fid, '      {\n      COLORMAPFRACTION = %f\n',1);
-%     fprintf(fid, '      LEADRGB\n');
-%     fprintf(fid, '        {\n');
-%     fprintf(fid, '        R = %d\n',round(map(map_row,1)*255));
-%     fprintf(fid, '        G = %d\n',round(map(map_row,2)*255));
-%     fprintf(fid, '        B = %d\n',round(map(map_row,3)*255));
-%     fprintf(fid, '        }\n');
-%     fprintf(fid, '      TRAILRGB\n');
-%     fprintf(fid, '        {\n');
-%     fprintf(fid, '        R = %d\n',round(map(map_row,1)*255));
-%     fprintf(fid, '        G = %d\n',round(map(map_row,2)*255));
-%     fprintf(fid, '        B = %d\n',round(map(map_row,3)*255));
-%     fprintf(fid, '        }\n');
-%     fprintf(fid, '      }\n');
+% the last point
+fprintf(fid, '    CONTROLPOINT %d\n', total_cp);
+fprintf(fid, '      {\n      COLORMAPFRACTION = %f\n',1);
+fprintf(fid, '      LEADRGB\n');
+fprintf(fid, '        {\n');
+fprintf(fid, '        R = %d\n',round(map(map_row,1)*255));
+fprintf(fid, '        G = %d\n',round(map(map_row,2)*255));
+fprintf(fid, '        B = %d\n',round(map(map_row,3)*255));
+fprintf(fid, '        }\n');
+fprintf(fid, '      TRAILRGB\n');
+fprintf(fid, '        {\n');
+fprintf(fid, '        R = %d\n',round(map(map_row,1)*255));
+fprintf(fid, '        G = %d\n',round(map(map_row,2)*255));
+fprintf(fid, '        B = %d\n',round(map(map_row,3)*255));
+fprintf(fid, '        }\n');
+fprintf(fid, '      }\n');
 
 fprintf(fid, '    }\n');
 
 fclose(fid);
-
-
 
 % end
