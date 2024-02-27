@@ -324,7 +324,7 @@ event iterLog(i += 5) {
 /**
 ### Dump output, Gfs file output, free-surface output*/
 
-event snapshot (t += TOUTPUT) {
+event snapshot (t += TOUTPUT*5.0) {
   char nameOut[50], nameOutText[50];
   sprintf (nameOut, "dumpSnapshot-%g", t);
   dump(file=nameOut, list={f, u.x, u.y, uf.x, uf.y, p, omega});
@@ -340,11 +340,30 @@ event snapshot (t += TOUTPUT) {
 }
 
 event outputGfsFiles (t += TOUTPUT) {
-    char name[80];
+// event outputGfsFiles (i+=20) {
+    char name[40];
+    char nameBSS[32];
+    double bedVel = 0.0;
+    double bedStress = 0.0;
+    double bedX = 0.0;
+    double bedY = 0.0;
     sprintf(name, "out-%g.gfs", t);
+    sprintf(nameBSS, "bss-%g.dat", t);
     FILE *fp1 = fopen(name, "w");
+    FILE *fp2 = fopen(nameBSS, "a+");
     output_gfs(fp1, translate = true, list={f, u.x, u.y, uf.x, uf.y, p, omega});
     fclose (fp1);
+
+    // bed-shear stress
+    bedY = xextent_/pow(2,MAXLEVEL)/2.0;
+    for (int l = 1; l <= pow(2,MAXLEVEL); l++)
+    {
+      bedX = xextent_/pow(2,MAXLEVEL)*l-0.5*xextent_/pow(2,MAXLEVEL);
+      bedVel = interpolate(u.x, bedX, bedY, 0.0);
+      bedStress = CHANNELTAN*BPARAM/(FR*FR) + MUMUD*pow((bedVel/bedY), POWERLAWINDEX);
+      fprintf(fp2, "%g %g %g\n", bedX, bedVel, bedStress);
+    }
+    fclose (fp2);
 }
 
 event outputInterface(t += TOUTPUT) {
