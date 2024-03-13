@@ -11,8 +11,8 @@ num_slices = 40;
 % for selected range
 % num_slices = 1200; % based on single cells
 xMiddleNS = 2069.5;
-vert_reso = 128; % num of points to do vert. interp.
-vert_interp_range = 4.251; % range for vert. interp. in terms of Nusselt Scaling
+vert_reso = 120; % num of points to do vert. interp.
+vert_interp_range = 3.999; % range for vert. interp. in terms of Nusselt Scaling
 so = 0.015;
 lxNS = 2400.0; % domain length in terms of Nusselt Scaling
 
