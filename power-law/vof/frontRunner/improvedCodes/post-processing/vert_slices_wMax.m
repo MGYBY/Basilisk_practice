@@ -55,6 +55,7 @@ for k = 1:1:num_slices
 
     % write (append) the max vert vel to file
     fid = fopen(vert_slice_filename, 'a+');
-    fprintf(fid, '%g %g \n', x_coord, slice_max);
+    % fprintf(fid, '%g %g \n', x_coord, slice_max);
+    fprintf(fid, '%4.4f %g \n', x_coord, slice_max);
     fclose(fid);
 end
