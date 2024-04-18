@@ -95,6 +95,8 @@ event tracer_advection (i++)
 #endif
 }
 
+scalar yieldSurface[], strainRate[];
+
 event properties (i++)
 {
   // not for parallelism
@@ -122,6 +124,7 @@ event properties (i++)
         // fprintf (ferr, "3D D2 has not been implemented yet");
         // exit (1);
       #endif
+    strainRate[] = D2;
       if (D2 > 0.) {
         D2 = max(D2, 1.0e-20);
 //         double temp = muRef * exp((powerLawIndex - 1.) * log(D2 * pow(2,0.5)));
@@ -129,6 +132,7 @@ event properties (i++)
         double temp = muRef * exp((powerLawIndex - 1.) * log( D2 * pow(2,0.5))) + tauP/((D2 * pow(2,0.5)));
 //         double temp = muRef * exp((powerLawIndex - 1.) * log(D2));
 //         m = MUREF*exp ((N - 1.)*log (d2*pow(2,0.5)));
+	      yieldSurface[] = temp>=mumax ? 1.0*f[] : 0.0*f[];
         muTemp = min(temp, mumax);
 //         muTemp = temp;
       } else {
