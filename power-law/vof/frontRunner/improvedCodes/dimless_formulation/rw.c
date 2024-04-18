@@ -342,7 +342,7 @@ event outputGfsFiles (t += TOUTPUT) {
     sprintf(nameBSS, "bss-%g.dat", t);
     FILE *fp1 = fopen(name, "w");
     FILE *fp2 = fopen(nameBSS, "a+");
-    output_gfs(fp1, translate = true, list={f, u.x, u.y, uf.x, uf.y, p, omega});
+    output_gfs(fp1, translate = true, list={f, u.x, u.y, uf.x, uf.y, p, omega, yieldSurface, strainRate});
     fclose (fp1);
 
     // bed-shear stress
