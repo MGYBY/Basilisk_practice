@@ -1,0 +1,37 @@
+# GfsView 2D
+View {
+  tx = 0.0201362 ty = 0.199678
+  sx = 1 sy = 1 sz = 1
+  q0 = 0 q1 = 0 q2 = -0.707045 q3 = 0.707168
+  fov = 17.4013
+  r = 0.3 g = 0.4 b = 0.6
+  res = 1
+  lc = 0.001
+  reactivity = 0.1
+}
+Squares {
+  r = 0 g = 0 b = 0
+  shading = Constant
+  maxlevel = -1
+  font_size = 1
+  raster_font = 1
+  line_width = 1
+} {
+  n.x = 0 n.y = 0 n.z = 1
+  pos = 0
+} h {
+  amin = 1
+  amax = 1
+  cmap = Jet
+}
+Cells {
+  r = 0 g = 0 b = 0
+  shading = Constant
+  maxlevel = -1
+  font_size = 1
+  raster_font = 1
+  line_width = 1
+} {
+  n.x = 0 n.y = 0 n.z = 1
+  pos = 0
+}
