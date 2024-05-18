@@ -5,5 +5,6 @@ One-dimensional SW simulations.
 
 TODO:
 - [x] Kurganov's free-of-Riemann solver approach (central-upwind).
-- [ ] Central-upwind scheme with numerical dissipation reduction (Kurganov & Lin 2007).
+- [x] Central-upwind scheme with numerical dissipation reduction (Kurganov & Lin 2007).
+  - [This link](https://github.com/MGYBY/Gerris_practice/blob/main/power-law/2D/damBreak_onSlope/explicit_scheme/riemann-power-law_sharp.h)
 - [ ] Passive scalar transport equation.
