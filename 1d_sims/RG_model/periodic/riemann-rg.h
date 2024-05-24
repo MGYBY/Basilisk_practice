@@ -164,3 +164,47 @@ void kurganovSharp (double hm, double hp, double um, double up, double tem, doub
 //   else
 //     *fh = *fq = 0.;
 // }
+
+void hllc (double hm, double hp, double um, double up, double tem, double tep, double Delta,
+	       double * fh, double * fq, double * fhte, double * dtmax)
+{
+  double ptp = -1.0*((G*hp-2.0*tep+up*up)/pow(hp,2.0)), ptm = -1.0*((G*hm-2.0*tem+um*um)/pow(hm,2.0)); // phi-total variable
+  double pp = 0.50*G*hp*hp+ptp*pow(hp, 3.), pm = 0.50*G*hm*hm+ptm*pow(hm, 3.); // P variable
+  double qm = hm*um, qp = hp*up;
+  double hEm = hm*tem, hEp = hp*tep; // the conservative variables for h*E
+  double cp = sqrt(G*hp+3.*hp*hp*ptp), cm = sqrt(G*hm+3.*hm*hm*ptm);
+  double ustar = (um + up)/2. + cm - cp;
+  double cstar = (cm + cp)/2. + (um - up)/4.;
+  double SL = hm == 0. ? up - 2.*cp : min (um - cm, ustar - cstar);
+  double SR = hp == 0. ? um + 2.*cm : max (up + cp, ustar + cstar);
+
+  if (0. <= SL) {
+    *fh = um*hm;
+    *fq = qm*um + pm;
+    *fhte = qm*tem+pm*um;
+  }
+  else if (0. >= SR) {
+    *fh = up*hp;
+    *fq = qp*up + pp;
+    *fhte = qp*tep+pp*up;
+  }
+  else {
+    double fhm = um*hm;
+    double fum = hm*(um*um + G*hm/2.);
+    double ftem = qm*tem+pm*um;
+    double fhp = up*hp;
+    double fup = hp*(up*up + G*hp/2.);
+    double ftep = qp*tep+pp*up;
+
+    *fh = (SR*fhm - SL*fhp + SL*SR*(hp - hm))/(SR - SL);
+    *fq = (SR*fum - SL*fup + SL*SR*(qp - qm))/(SR - SL);
+    *fhte = (SR*ftem - SL*ftep + SL*SR*(hEp - hEm))/(SR - SL);
+  }
+
+  double a = max(fabs(SL), fabs(SR));
+  if (a > epsilon) {
+    double dt = CFL*Delta/a;
+    if (dt < *dtmax)
+      *dtmax = dt;
+  }
+}
