@@ -1,0 +1,289 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      8580,        281]
+NotebookOptionsPosition[      7592,        243]
+NotebookOutlinePosition[      8017,        260]
+CellTagsIndexPosition[      7974,        257]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+   "Approximate", " ", "formulae", " ", "for", " ", "R\[Infinity]", " ", 
+    "and", " ", "R1\[Infinity]"}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"RInftyAppEqn", "=", 
+     RowBox[{"RInfty", "==", 
+      RowBox[{
+       RowBox[{"-", "0.09781"}], "+", 
+       RowBox[{"0.14122", " ", "APlus"}], "-", 
+       RowBox[{"1.7357", "*", 
+        RowBox[{"10", "^", 
+         RowBox[{"(", 
+          RowBox[{"-", "3"}], ")"}]}], " ", 
+        SuperscriptBox[
+         RowBox[{"(", "APlus", ")"}], "2"]}], "+", 
+       RowBox[{"1.5847", "*", 
+        RowBox[{"10", "^", 
+         RowBox[{"(", 
+          RowBox[{"-", "5"}], ")"}]}], "*", 
+        SuperscriptBox["APlus", "3"]}]}]}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"R1InftyAppEqn", "=", 
+     RowBox[{"R1Infty", "==", 
+      RowBox[{
+       RowBox[{"-", "0.1121"}], "+", 
+       RowBox[{"0.28611", " ", "APlus"}], "-", 
+       RowBox[{"5.468", "*", 
+        RowBox[{"10", "^", 
+         RowBox[{"(", 
+          RowBox[{"-", "3"}], ")"}]}], " ", 
+        SuperscriptBox["APlus", "2"]}], " ", "+", " ", 
+       RowBox[{"6.887", "*", 
+        RowBox[{"10", "^", 
+         RowBox[{"(", 
+          RowBox[{"-", "5"}], ")"}]}], " ", "*", 
+        SuperscriptBox["APlus", "3"]}]}]}]}], ";"}]}]}]], "Input",
+ CellChangeTimes->{{3.9264403122232914`*^9, 3.9264405277771087`*^9}, {
+  3.9266035646195183`*^9, 3.926603591400029*^9}},
+ ExpressionUUID -> "e8ca65e6-c61e-41dc-aace-2389c51d6ed0"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Solve", "[", 
+  RowBox[{
+   RowBox[{"RInftyAppEqn", "/.", 
+    RowBox[{"{", 
+     RowBox[{"APlus", "->", "18.74"}], "}"}]}], ",", "RInfty"}], " ", 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.9264405302168674`*^9, 3.92644055494084*^9}},
+ ExpressionUUID -> "5c418a8d-5a7c-469b-81d5-55f82e411007"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"RInfty", "\[Rule]", "2.0433896405535283`"}], "}"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.926440555846645*^9},
+ ExpressionUUID -> "0f5ebe22-fe46-4dd9-b8ec-36e23ced27a8"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Solve", "[", 
+  RowBox[{
+   RowBox[{"R1InftyAppEqn", "/.", 
+    RowBox[{"{", 
+     RowBox[{"APlus", "->", "18.74"}], "}"}]}], ",", "R1Infty"}], " ", 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.926440562037103*^9, 3.926440567064292*^9}},
+ ExpressionUUID -> "cf0b7547-0ea1-486e-bd00-653cd01e8ba2"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"R1Infty", "\[Rule]", "3.7825586780248797`"}], "}"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{{3.9264405627615757`*^9, 3.9264405674915833`*^9}},
+ ExpressionUUID -> "5bd12512-bd1d-4b81-8dcc-094793e5003e"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"cf", "=", 
+   RowBox[{
+    SuperscriptBox["\[Kappa]", "2"], " ", 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{"RInf", "-", "2", "+", 
+       RowBox[{"2", " ", 
+        RowBox[{"Log", "[", "2", "]"}]}], "+", 
+       RowBox[{"Log", "[", "\[Kappa]", "]"}], "+", 
+       RowBox[{"Log", "[", 
+        FractionBox[
+         SqrtBox[
+          RowBox[{"gHat", " ", 
+           SuperscriptBox["H", "3"]}]], "\[Nu]"], "]"}]}], ")"}], 
+     RowBox[{"-", "2"}]]}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.9264519701923437`*^9, 3.926452029273056*^9}},
+ ExpressionUUID -> "90be1e87-2ba3-410b-a984-69c4e786ad9f"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"cfVal", "=", 
+  RowBox[{"cf", "/.", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"\[Kappa]", "->", "0.412"}], ",", " ", 
+     RowBox[{"RInf", "->", "2.0433896405535283`"}], ",", " ", 
+     RowBox[{"gHat", "->", 
+      RowBox[{"(", 
+       RowBox[{"9.81", "*", "0.05011"}], ")"}]}], ",", " ", 
+     RowBox[{"H", "->", "0.008"}], ",", " ", 
+     RowBox[{"\[Nu]", "->", 
+      RowBox[{"(", 
+       RowBox[{"9.36", "*", 
+        RowBox[{"10", "^", 
+         RowBox[{"(", 
+          RowBox[{"-", "7"}], ")"}]}]}], ")"}]}]}], "}"}]}]}]], "Input",
+ CellChangeTimes->{{3.9264520310020466`*^9, 3.926452091631336*^9}},
+ ExpressionUUID -> "8721f104-0237-4021-836d-f54844147644"],
+
+Cell[BoxData["0.003641885418827559`"], "Output",
+ CellChangeTimes->{{3.9264520721818557`*^9, 3.9264520924452705`*^9}},
+ ExpressionUUID -> "d054a6b3-bc6f-428f-ab12-b32325277070"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+   "Exact", " ", "formulae", " ", "for", " ", "R\[Infinity]", " ", "and", " ",
+     "R1\[Infinity]"}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"RInftyFunc", "[", "A_", "]"}], ":=", 
+   RowBox[{"NIntegrate", "[", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       FractionBox["1", 
+        RowBox[{"1", "+", 
+         SqrtBox[
+          RowBox[{"1", "+", 
+           RowBox[{
+            SuperscriptBox["x", "2"], " ", 
+            SuperscriptBox[
+             RowBox[{"(", 
+              RowBox[{"1", "-", 
+               SuperscriptBox["\[ExponentialE]", 
+                RowBox[{
+                 RowBox[{"-", "x"}], "/", "A"}]]}], ")"}], "2"]}]}]]}]], "-", 
+       FractionBox["1", 
+        RowBox[{"1", "+", 
+         SqrtBox[
+          RowBox[{"1", "+", 
+           SuperscriptBox["x", "2"]}]]}]]}], ")"}], ",", " ", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", "0", ",", "\[Infinity]"}], "}"}]}], 
+    "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.926603605048501*^9, 3.926603629188998*^9}, {
+  3.9266037648020487`*^9, 3.926603788651856*^9}, {3.9266040664145*^9, 
+  3.926604120464983*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"R1InftyFunc", "[", "A_", "]"}], ":=", 
+  RowBox[{"NIntegrate", "[", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      FractionBox["1", 
+       SqrtBox[
+        RowBox[{"1", "+", 
+         RowBox[{
+          SuperscriptBox["x", "2"], " ", 
+          SuperscriptBox[
+           RowBox[{"(", 
+            RowBox[{"1", "-", 
+             SuperscriptBox["\[ExponentialE]", 
+              RowBox[{
+               RowBox[{"-", "x"}], "/", "A"}]]}], ")"}], "2"]}]}]]], "-", 
+      FractionBox["1", 
+       SqrtBox[
+        RowBox[{"1", "+", 
+         SuperscriptBox["x", "2"]}]]]}], ")"}], ",", " ", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "0", ",", "\[Infinity]"}], "}"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.926604142682993*^9, 3.926604163890587*^9}, 
+   3.9266042541505413`*^9},
+ NumberMarks->False],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"RInfVal", "=", 
+  RowBox[{"RInftyFunc", "[", 
+   RowBox[{"(", 
+    RowBox[{"2.0", "*", "0.412", "*", "18.74"}], ")"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.9266041806125183`*^9, 3.926604204171517*^9}}],
+
+Cell[BoxData["2.042612673543665`"], "Output",
+ CellChangeTimes->{3.9266042054818993`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"R1InfVal", "=", 
+  RowBox[{"R1InftyFunc", "[", 
+   RowBox[{"(", 
+    RowBox[{"2.0", "*", "0.412", "*", "18.74"}], ")"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.9266042102993298`*^9, 3.926604211491522*^9}}],
+
+Cell[BoxData["3.782657135175844`"], "Output",
+ CellChangeTimes->{3.926604212326158*^9, 3.9266042569038897`*^9}]
+}, Open  ]]
+},
+WindowSize->{1286, 795},
+WindowMargins->{{319, 315}, {Automatic, 109}},
+Magnification:>1.25 Inherited,
+FrontEndVersion->"11.0 for Linux x86 (64-bit) (September 21, 2016)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID -> "a7757adc-0b8d-4404-80f5-2774bceea41d"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 1528, 42, 97, "Input"],
+Cell[CellGroupData[{
+Cell[2111, 66, 316, 8, 40, "Input"],
+Cell[2430, 76, 230, 6, 40, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2697, 87, 317, 8, 40, "Input"],
+Cell[3017, 97, 259, 6, 40, "Output"]
+}, Open  ]],
+Cell[3291, 106, 643, 18, 94, "Input"],
+Cell[CellGroupData[{
+Cell[3959, 128, 690, 18, 69, "Input"],
+Cell[4652, 148, 177, 2, 40, "Output"]
+}, Open  ]],
+Cell[4844, 153, 1162, 34, 177, "Input"],
+Cell[6009, 189, 839, 26, 138, "Input"],
+Cell[CellGroupData[{
+Cell[6873, 219, 229, 5, 40, "Input"],
+Cell[7105, 226, 89, 1, 40, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7231, 232, 231, 5, 40, "Input"],
+Cell[7465, 239, 111, 1, 73, "Output"]
+}, Open  ]]
+}
+]
+*)
+
