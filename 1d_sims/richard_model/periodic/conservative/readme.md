@@ -1,4 +1,4 @@
 Using the `conservation.h` code.
 
 TODOs:
- - [ ] Add the dissipation reduction.
+ - [x] Add the dissipation reduction.
