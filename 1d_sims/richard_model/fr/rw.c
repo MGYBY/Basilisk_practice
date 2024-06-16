@@ -45,8 +45,8 @@
 #define DOMAINLENGTH (1200.0*normalDepth/sinTheta)
 
 #define INITLEVEL 12
-#define MAXLEVEL 14
-#define MINLEVEL 4
+#define MAXLEVEL 15
+#define MINLEVEL 1
 
 #define simTime 128.0
 #define outputInterval 0.5
