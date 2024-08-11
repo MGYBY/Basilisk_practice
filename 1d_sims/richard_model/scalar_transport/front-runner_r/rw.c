@@ -406,7 +406,7 @@ event hmaxUmax (i+=50)
            }
      }
 
-     fprintf(fp2, "%.10g %.10g %.10g %.10g \n", t, maxDepth, maxDepthLocX, maxDepthVel);
+     fprintf(fp2, "%.10g %.10g %.10g %.10g %g \n", t, maxDepth, maxDepthLocX, maxDepthVel, maxConc);
      fprintf(fp3, "%.10g %.10g %.10g %.10g \n", t, maxVel, maxVelLocX, maxVelDepth);
 
      fclose(fp2);
