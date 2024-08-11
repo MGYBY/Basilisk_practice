@@ -78,7 +78,8 @@ int main() {
   G = gPrime;
   init_grid(1 << (INITLEVEL));
 
-  theta = 1.30;
+  // theta = 1.30;
+  theta = 1.530;
   CFL = 0.425;
 
   // periodic (right);
