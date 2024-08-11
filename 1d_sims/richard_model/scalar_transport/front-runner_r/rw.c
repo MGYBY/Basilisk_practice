@@ -385,6 +385,7 @@ event hmaxUmax (i+=50)
      double maxDepthVel = 0.0;
      double maxVelLocX = 0.0;
      double maxVelDepth = 0.0;
+  double maxConc=0.0;
 
      FILE *fp2 = fopen("maxDepth", "a+");
      FILE *fp3 = fopen("maxVel", "a+");
@@ -395,6 +396,7 @@ event hmaxUmax (i+=50)
                 maxDepth = h[];
                 maxDepthLocX = x;
                 maxDepthVel = u.x[];
+        maxConc = conc[];
            }
 
            if (u.x[]>maxVel){
