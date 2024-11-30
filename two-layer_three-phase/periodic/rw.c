@@ -177,12 +177,12 @@ double distSurf(double xCoord, double hn)
   return (hn*(1.0+DISTAMP*sin(2.0*pi*xCoord/(xextent_/1.0))));
 }
 
-double velSU(double xCoord, double yCoord, double hn)
+double velSU(double xCoord, double yCoord, double hTotal)
 {
   // only for the fluid & mud phases
   double term, interY;
   term = 2.0+3.0*hR*rhoR;
-  interY = hR*(hn*(1.0+DISTAMP*sin(2.0*pi*xCoord/(xextent_/1.0)))); // essentially "distSurf@ND1"*hR
+  interY = hR*(hTotal*(1.0+DISTAMP*sin(2.0*pi*xCoord/(xextent_/1.0)))); // essentially "distSurf@ND1"*hR
   if (yCoord<=interY)
     return ((3.0*yCoord*(2.0+2.0*hR*rhoR))/term-3.0*(yCoord*yCoord)/term);
   else
