@@ -4,3 +4,7 @@
 
 CC99='mpicc -std=c99' qcc -Wall -O2 -D_MPI=1 test_mpi.c -o test_mpi -lm -L$BASILISK/gl -lglutils -lfb_osmesa -lOSMesa -lGLU -lm
 mpirun --oversubscribe -np 3 ./test_mpi -parallel > log
+
+# for ML solvers
+# CC99='mpicc -std=c99' qcc -Wall -O2 -D_MPI=1 lee.c -o lee -lm -L$BASILISK/gl -lglutils -lfb_osmesa -lOSMesa -lGLU -lm  -L$BASILISK/ppr -lppr -lgfortran
+# mpirun --oversubscribe -np 8 ./lee -parallel > log
