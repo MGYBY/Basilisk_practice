@@ -1,0 +1,216 @@
+# Title: The square and circular cylinder impacted by the normal flow
+#
+# Description:
+#
+
+# below this depth the flow is considered "dry"
+Define DRY 1.e-5
+
+Define sinTheta (0.15/pow(0.15*0.15+0.3*0.3, 0.50))
+Define cosTheta (pow(1.0-sinTheta*sinTheta, 0.50))
+Define tanTheta (sinTheta/cosTheta)
+Define simTime 50.0
+Define cf 1.0e-3
+Define hin 0.30
+Define uin 2.00
+
+Define STAIRNUM 20
+Define STAIRHEIGHT 0.150
+Define FRONTLEN 2.80
+Define BACKLEN 1.50
+Define BOTTOMELEV ((-1.0)*STAIRNUM*STAIRHEIGHT)
+Define UPPERPASSAGEWIDTH 2.50
+Define LOWERPASSAGEWIDTH 1.00
+Define WALLBEGINX 2.50
+
+Define OUTPUTTIME 0.25
+
+Define GRAV 9.81
+
+Define domainLength 5.0
+Define domainWidth 2.50
+Define boxLength 2.50
+
+# The "leg"
+Define CYRAD (0.125/2.0)
+Define CYCENTERX (FRONTLEN+4.0*STAIRHEIGHT/tanTheta+0.5*STAIRHEIGHT/tanTheta)
+Define CYCENTERY (CYRAD*2.0)
+
+Define EPSILONU 1e-5
+
+# mesh adaptivity parameters
+Define MAXLEVEL 9
+Define MINLEVEL 2
+
+Define LARGETOPO 10.0
+
+2 1 GfsRiver GfsBox GfsGEdge {
+    x = 0.5 y = 0.5 
+} {
+    # define the topography
+    Global {
+        static double topoFunc(double x, double y) {
+        double zbVal;
+        int i;
+        zbVal = 0.0;
+        for (i = 0; i < STAIRNUM; i++){
+            if (x>=i*STAIRHEIGHT/tanTheta+FRONTLEN && x<(i+1)*STAIRHEIGHT/tanTheta+FRONTLEN){
+                zbVal = (-1.0)*(i+1)*STAIRHEIGHT;
+            }
+            if (x>8.8) {
+                zbVal = BOTTOMELEV;
+            }
+       }
+       // mask the "side walls"
+       if(y>LOWERPASSAGEWIDTH && x>WALLBEGINX){
+            zbVal = LARGETOPO;
+       }
+        return zbVal;
+        }
+    }
+
+    Time { end = 24.0 }
+
+    PhysicalParams { L = boxLength g = GRAV}
+
+    # Refine MAXLEVEL-2
+    Refine (y<domainWidth*1.10 ? MAXLEVEL : MINLEVEL)
+
+    # InitMask {} (y>domainWidth)
+
+    # We use a sphere knowing that in 2D the resulting object will be
+    # a cross-section of the sphere at z = 0 i.e. a cylinder of radius
+    # 0.5
+    # Solid (cube((XB+width/2.0), boxLength/2.0 ,0.0 , width))
+    # Solid (sphere((XB+width/2.0), boxLength/2.0 ,0.0 , width/2.0))
+    Solid (sphere(CYCENTERX, CYCENTERY, 0.0, CYRAD))
+    # mask the upper part
+    # Solid (domainWidth - y)
+    RefineSolid MAXLEVEL
+
+    Init {} {
+        Zb = topoFunc(x, y)
+
+        # Initial dam-break set-ups
+	    P = (x<FRONTLEN && Zb<LARGETOPO*0.90) ? hin : 0.0
+	    U = 0.0
+	    V = 0.0
+
+	    OBSREF = pow((x-CYCENTERX),2.0)+pow((y-CYCENTERY),2.0)<=pow((CYRAD*1.20),2.0) ? 1.0 : 0.0
+
+	    Pmax = 0.0
+    }
+
+    Init { istep = 1 } {
+    
+    Pmax = (P > DRY && P > Pmax ? P : Pmax)
+
+    # # TVD RK3
+    # # follow the integration procedure suggested by E.F.Toro
+    # # first stage
+    # UMed1 = ((P > DRY) ? U + dt * powerLawX(P, U, V) : 0.)
+    # VMed1 = ((P > DRY) ? V + dt * powerLawY(P, U, V) : 0.)
+    #
+	# # second stage
+	# UMed2 = ((P > DRY) ? (3.0/4.0)*U + (1.0/4.0)*UMed1 + (1.0/4.0)*dt*powerLawX(P, UMed1, VMed1) : 0.)
+	# VMed2 = ((P > DRY) ? (3.0/4.0)*V + (1.0/4.0)*VMed1 + (1.0/4.0)*dt*powerLawY(P, UMed1, VMed1) : 0.)
+    #
+	# # third stage
+	# U = ((P > DRY) ? (1.0/3.0)*U+(2.0/3.0)*UMed2+(2.0/3.0)*dt*powerLawX(P, UMed2, VMed2) : 0.)
+    # V = ((P > DRY) ? (1.0/3.0)*V+(2.0/3.0)*VMed2+(2.0/3.0)*dt*powerLawY(P, UMed2, VMed2) : 0.)
+    # P = (P > DRY ? P : 0.)
+
+    # check erroneous velocity
+    # follow the B-flood paper transformation method
+    U = (Velocity < 20.0) ? U : 20.0*U*P/(Velocity)
+    V = (Velocity < 20.0) ? V : 20.0*V*P/(Velocity)
+
+    # implicit scheme for quadratic bottom friction with coefficient 1e-3
+    U = P > DRY ? U/(1. + dt*Velocity*cf/P) : 0
+    V = P > DRY ? V/(1. + dt*Velocity*cf/P) : 0
+#     this trick may cause mass conservation problem
+#     P = (P > DRY ? P : 0.)
+    }
+
+    AdvectionParams {
+#         gradient = gfs_center_sweby_gradient
+        gradient = gfs_center_van_leer_gradient
+        cfl = 0.450
+        }
+
+     # Refine ((y>1.5)&&(y<3.5)&&(x>1.0)&&(x<4.0) ? 9 : 5)
+     AdaptGradient { istart = 1 istep = 1} {
+       cmax = 1e-3
+       cfactor = 2
+       # cfactor = 4
+       maxlevel = MAXLEVEL
+       minlevel = MINLEVEL
+#     } (P < DRY ? 0. : P + Zb)
+      } (P < DRY ? 0. : P)
+
+#      AdaptError { istart = 1 istep = 1 } { cmax = 0.9e-3 maxlevel = MAXLEVEL minlevel = MINLEVEL } (P < DRY ? 0. : P + Zb)
+     
+     # To correctly resolve the topo
+     AdaptGradient { istart = 1 istep = 1} {
+       cmax = 1.e-2
+       cfactor = 3
+       # cfactor = 4
+       maxlevel = MAXLEVEL
+       minlevel = MINLEVEL
+    } Zb
+
+    # Use constant resolution around obstacle
+    AdaptFunction { istep = 1 } {
+	cmax = 0
+	maxlevel = MAXLEVEL
+    } OBSREF
+    
+    AdaptError { istep = 1 } {
+    	cmax = 0.00075
+    	maxlevel = MAXLEVEL
+    } Pmax
+      
+      #(P < DRY ? 0. : P + Zb)
+
+    OutputTime { istep = 10 } stderr
+    OutputTime { istep = 10 } ./timeStats.txt
+    # OutputSimulation { istep = 10 } stdout
+    OutputSimulation { step = OUTPUTTIME } snapshot-%g.gfs { variables = P,U,V,OBSREF,Zb }
+
+    #OutputSimulation { step = 0.5 } snapshotText-%g.txt {
+    #    format = text
+    #}
+    
+    OutputSolidForce { istep = 1 } f
+
+    # OutputLocation { istep = 10 } Rmax 0.763 0.872 0.0
+
+    GModule gfsview
+    OutputView { istart = 1 step = 0.01 } {
+	ppm2mpeg -s 850x450 > depth.mpg
+    } { width = 850 height = 450 } viewMod_2.gfv
+
+} {
+# scheme = hllc
+scheme = kinetic
+}
+# Impose symmetry conditions on top and bottom boundaries
+GfsBox {
+left = Boundary {
+    BcDirichlet P hin
+    BcNeumann U 0.0
+    BcNeumann V 0.0
+}
+top = Boundary
+bottom = Boundary
+}
+GfsBox {
+top = Boundary
+bottom = Boundary
+right = Boundary {
+    BcNeumann P 0.0
+    BcNeumann U 0.0
+    BcNeumann V 0.0
+}
+}
+1 2 right
