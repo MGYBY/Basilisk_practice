@@ -353,5 +353,7 @@ int main()
   thixo_relaxation_scheme = relax_scheme;
   thixo_use_exact_relaxation = false;
 
+  // TODO: add CFL number here ~0.45
+
   run();
 }
