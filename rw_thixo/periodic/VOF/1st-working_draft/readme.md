@@ -6,4 +6,4 @@ TODO:
 - [ ] Double check of gravity code block (f[]+f[-1]?).
 - [ ] Efficiency boost strategies using OMP.
 - [ ] view.h and videos?
-
+- [ ] embed bc for velocities fix
