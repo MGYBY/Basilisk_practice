@@ -7,3 +7,4 @@ TODO:
 - [ ] Efficiency boost strategies using OMP.
 - [ ] view.h and videos?
 - [ ] embed bc for velocities fix
+- [ ] double check whether D2 calculation is consistent.
