@@ -7,4 +7,4 @@ TODO:
 - [ ] Efficiency boost strategies using OMP.
 - [ ] view.h and videos?
 - [ ] embed bc for velocities fix
-- [ ] double check whether D2 calculation is consistent.
+- [x] double check whether D2 calculation is consistent. (ref to S-U flow code)
