@@ -29,7 +29,7 @@ vertical profiles.
 #define AMP 0.10
 #endif
 #ifndef DOMAINLENGTH
-#define DOMAINLENGTH 2.5
+#define DOMAINLENGTH 3.0
 #endif
 #ifndef SIMTIME
 #define SIMTIME 32.
