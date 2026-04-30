@@ -15,7 +15,8 @@ velocities and structure variables are initialized from the steady base-state
 vertical profiles.
 */
 
-#include "grid/multigrid1D.h"
+// #include "grid/multigrid1D.h"
+#include "grid/bitree.h"
 #include "thixo_multilayer_basilisk_explicitFrV_fixed.h"
 
 #ifndef NLAYERS
@@ -31,19 +32,19 @@ vertical profiles.
 #define DOMAINLENGTH 2.5
 #endif
 #ifndef SIMTIME
-#define SIMTIME 40.
+#define SIMTIME 32.
 #endif
 #ifndef OUTPUTINTERVAL
-#define OUTPUTINTERVAL 1.
+#define OUTPUTINTERVAL 2.
 #endif
 #ifndef PROFILE_FILE
 #define PROFILE_FILE "profile.txt"
 #endif
 
-#define FrReal 0.70
+#define FrReal 1.00
 #define normalVel (0.20727)
 #define normalDepth 1.00
-#define MAXLEVEL 11
+#define MAXLEVEL 9
 #define MINLEVEL 3
 #define yieldSurfThre 1.10e-8
 #define colorbarMax (normalVel*3.00)
@@ -61,6 +62,8 @@ double H0 = 1.;
 
 double * zprof = NULL, * uprof = NULL, * lprof = NULL;
 int nprof = 0;
+
+scalar depthGrad[], uAve[], yieldSurf[];
 
 static int read_profile (const char * fname)
 {
@@ -190,8 +193,13 @@ event init (i = 0)
 
       vector uk = ul[l];
       scalar lam = lambdal[l];
+      // TODO: add perturbation to velocity too using zeta coordinate
       uk.x[] = interp_avg (zprof, uprof, nprof, z0, z1);
       lam[] = interp_avg (zprof, lprof, nprof, z0, z1);
+
+      uAve[] += pow((uk.x[]*uk.x[]+uk.y[]*uk.y[]),0.50)*layer[l];
+      yieldSurf[] = 0.0;
+      depthGrad[] = 0.0;
     }
   }
 }
@@ -221,7 +229,8 @@ event profiles (t = 0; t <= SIMTIME; t += OUTPUTINTERVAL)
   sprintf (name, "depth-%g.txt", t);
   FILE * fp = fopen (name, "w");
   foreach()
-    fprintf (fp, "%g %g\n", x, h[]);
+    // fprintf (fp, "%g %g\n", x, h[]);
+    fprintf (fp, "%g %g %g %g \n", x, h[], uAve[], yieldSurf[]);
   fclose (fp);
 
   sprintf (name, "layers-%g.txt", t);
@@ -337,6 +346,54 @@ event gnuplotLambda (t += OUTPUTINTERVAL; t <= SIMTIME)
   plotLam (fp);
 }
 
+event gradYSCalc (i++) {
+  foreach(){
+    depthGrad[] = fabs(h[-1]-h[1])/(2.*Delta);
+    uAve[] = 0.0;
+    double zCoord = zb[];
+    double uVertGrad = 0.0;
+    yieldSurf[] = 0.0;
+
+      for (int l = 0; l < nl; l++) {
+        zCoord += layer[l]*h[]*0.50;
+        u = ul[l];
+        // moved to .h file
+        // u.x[] += dt*grav;
+
+        uAve[] += pow((u.x[]*u.x[]+u.y[]*u.y[]),0.50)*layer[l];
+
+        if (l>0 && l<(nl-1)) {
+        // middle layers
+        vector um = ul[l-1] ;
+        vector up = ul[l+1] ;
+        uVertGrad = (up.x[]-um.x[])/(layer[l-1]*h[]*0.50+layer[l+1]*h[]*0.50+layer[l]*h[]);
+      }
+      else if (l==(nl-1))
+      {
+        // top layer
+        vector um = ul[l-1] ;
+        vector up = ul[l] ;
+        uVertGrad = (up.x[]-um.x[])/(layer[l-1]*h[]*0.50+layer[l]*h[]*1.50);
+      }
+      else
+      {
+        // bottom layer
+        vector um = ul[l] ;
+        vector up = ul[l+1] ;
+        uVertGrad = (up.x[]-um.x[])/(layer[l+1]*h[]*0.50+layer[l]*h[]*1.50);
+      }
+
+      if (uVertGrad<yieldSurfThre && yieldSurf[]<=0)
+      {
+        yieldSurf[] = zCoord;
+      }
+
+      zCoord += layer[l]*h[]*0.50;
+      }
+  }
+    boundary ((scalar *){u});
+}
+
 int main()
 {
   nl = NLAYERS;
@@ -348,12 +405,30 @@ int main()
   thixo_Gamma = Gammath;
   thixo_kappa = kappath;
   thixo_a = ath;
-  FrV = FrV_input;
+  // FrV = FrV_input;
+  // modified here for a more physically meaningful Fr
+  FrV = FrReal/normalVel;
   G = 1./sq (FrV);
   thixo_relaxation_scheme = relax_scheme;
   thixo_use_exact_relaxation = false;
 
-  // TODO: add CFL number here ~0.45
+  // CFL number here
+  CFL = 0.425;
 
   run();
+}
+
+/*
+ * AMR here
+ *
+ */
+event adapt1 (i++) {
+  // adapt_wavelet({h, depthGrad, uAve}, (double[]){normalDepth/200.0, 0.01, normalVel/200.0}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
+  // a more reasonable AMR criteria
+  adapt_wavelet({h, depthGrad, uAve, yieldSurf}, (double[]){normalDepth/300.0, 0.007, normalVel/300.0, normalDepth/200.50}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
+//      astats s = adapt_wavelet({h, depthGrad}, (double[]){1.0/300.0, 0.00016}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
+  // astats s = adapt_wavelet({ depthGrad}, (double[]){ 0.00010}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
+//   fprintf(stderr, "# refined %d cells, coarsened %d cells\n", s.nf, s.nc);
+  refine(x<=10.0*L0/pow(2, MAXLEVEL) && level<MAXLEVEL);
+  refine(x>=L0-10.0*L0/pow(2, MAXLEVEL) && level<MAXLEVEL);
 }
