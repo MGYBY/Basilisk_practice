@@ -46,9 +46,9 @@ vertical profiles.
 #define normalDepth 1.00
 #define MAXLEVEL 9
 #define MINLEVEL 3
-#define yieldSurfThre 1.10e-8
-#define colorbarMax (normalVel*3.00)
-#define PLOTRANGEMAX (3.250*normalDepth)
+#define yieldSurfThre 2.0e-3
+#define colorbarMax (normalVel*2.50)
+#define PLOTRANGEMAX (3.0*normalDepth)
 
 // Material parameters in the explicit-FrV formulation.
 double Trelax = 100.;
@@ -414,6 +414,7 @@ int main()
 
   // CFL number here
   CFL = 0.425;
+  theta = 1.3; // the default value
 
   run();
 }
@@ -422,10 +423,11 @@ int main()
  * AMR here
  *
  */
-event adapt1 (i++) {
+event adapt1 (t=6; i++) {
   // adapt_wavelet({h, depthGrad, uAve}, (double[]){normalDepth/200.0, 0.01, normalVel/200.0}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
   // a more reasonable AMR criteria
-  adapt_wavelet({h, depthGrad, uAve, yieldSurf}, (double[]){normalDepth/300.0, 0.007, normalVel/300.0, normalDepth/200.50}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
+  // adapt_wavelet({h, depthGrad, uAve, yieldSurf}, (double[]){normalDepth/300.0, 0.005, normalVel/300.0, normalDepth/200.50}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
+  adapt_wavelet({h, depthGrad, uAve}, (double[]){normalDepth/50.0, 0.025, normalVel/50.0}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
 //      astats s = adapt_wavelet({h, depthGrad}, (double[]){1.0/300.0, 0.00016}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
   // astats s = adapt_wavelet({ depthGrad}, (double[]){ 0.00010}, maxlevel = MAXLEVEL, minlevel = MINLEVEL);
 //   fprintf(stderr, "# refined %d cells, coarsened %d cells\n", s.nf, s.nc);
