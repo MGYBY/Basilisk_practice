@@ -65,6 +65,11 @@ int nprof = 0;
 
 scalar depthGrad[], uAve[], yieldSurf[];
 
+static inline double perturbation (double xx, double phase)
+{
+  return sin (2.*pi*xx/L0 + phase);
+}
+
 static int read_profile (const char * fname)
 {
   FILE * fp = fopen (fname, "r");
@@ -191,10 +196,15 @@ event init (i = 0)
         z0 += layer[k];
       double z1 = z0 + layer[l];
 
+      // Velocity perturbation in the sigma coordinate zeta = z/h.
+      // The profile table is interpreted as U(zeta), Lambda(zeta).
+      double pu = perturbation (x, UPHASE);
       vector uk = ul[l];
       scalar lam = lambdal[l];
-      // TODO: add perturbation to velocity too using zeta coordinate
-      uk.x[] = interp_avg (zprof, uprof, nprof, z0, z1);
+      // TODO: add perturbation to velocity too using zeta coordinate (solved)
+      // uk.x[] = interp_avg (zprof, uprof, nprof, z0, z1);
+      double ubase = interp_avg (zprof, uprof, nprof, z0, z1);
+      uk.x[] = ubase*(1. + UAMP*pu);
       lam[] = interp_avg (zprof, lprof, nprof, z0, z1);
 
       uAve[] += pow((uk.x[]*uk.x[]+uk.y[]*uk.y[]),0.50)*layer[l];
