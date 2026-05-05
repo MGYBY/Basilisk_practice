@@ -1,0 +1,248 @@
+#!/usr/bin/env bash
+
+# ============================================================
+# rorqualfetch
+# Lightweight screenFetch-like system summary for Rorqual
+# Designed for Alliance / Calcul Québec HPC login and compute nodes
+# ============================================================
+
+# IMPORTANT:
+# Do NOT put an interactive-shell guard here using [[ $- == *i* ]].
+# When this file is executed as a command, Bash normally runs it as a
+# non-interactive script. Such a guard would wrongly suppress all output.
+#
+# Put the interactive-shell guard in ~/.bashrc instead.
+
+# ---------- Colors ----------
+if [[ -t 1 ]]; then
+    BOLD="\033[1m"
+    DIM="\033[2m"
+    RED="\033[31m"
+    GREEN="\033[32m"
+    YELLOW="\033[33m"
+    BLUE="\033[34m"
+    MAGENTA="\033[35m"
+    CYAN="\033[36m"
+    RESET="\033[0m"
+else
+    BOLD=""
+    DIM=""
+    RED=""
+    GREEN=""
+    YELLOW=""
+    BLUE=""
+    MAGENTA=""
+    CYAN=""
+    RESET=""
+fi
+
+# ---------- Helper functions ----------
+has_cmd() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+get_value() {
+    local value="$1"
+    local fallback="$2"
+
+    if [[ -n "$value" ]]; then
+        printf "%s" "$value"
+    else
+        printf "%s" "$fallback"
+    fi
+}
+
+shorten_path() {
+    local path="$1"
+    path="${path/#$HOME/~}"
+    printf "%s" "$path"
+}
+
+# ---------- Basic system information ----------
+user_name=$(whoami 2>/dev/null || echo "unknown")
+host_name=$(hostname 2>/dev/null || echo "unknown")
+short_host=$(hostname -s 2>/dev/null || echo "$host_name")
+current_dir=$(pwd 2>/dev/null || echo "unknown")
+short_dir=$(shorten_path "$current_dir")
+
+if [[ -r /etc/os-release ]]; then
+    os_name=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d= -f2- | tr -d '"')
+else
+    os_name="unknown Linux"
+fi
+
+kernel_name=$(uname -r 2>/dev/null || echo "unknown")
+architecture=$(uname -m 2>/dev/null || echo "unknown")
+shell_name=$(basename "${SHELL:-unknown}")
+uptime_info=$(uptime -p 2>/dev/null || echo "unknown")
+date_info=$(date '+%Y-%m-%d %H:%M:%S %Z' 2>/dev/null || echo "unknown")
+
+# ---------- CPU information ----------
+if has_cmd lscpu; then
+    cpu_model=$(lscpu | awk -F: '/Model name/ {gsub(/^ +/,"",$2); print $2; exit}')
+    cpu_total=$(lscpu | awk -F: '/^CPU\(s\)/ {gsub(/^ +/,"",$2); print $2; exit}')
+    cpu_sockets=$(lscpu | awk -F: '/Socket\(s\)/ {gsub(/^ +/,"",$2); print $2; exit}')
+    cpu_cores_per_socket=$(lscpu | awk -F: '/Core\(s\) per socket/ {gsub(/^ +/,"",$2); print $2; exit}')
+    cpu_threads_per_core=$(lscpu | awk -F: '/Thread\(s\) per core/ {gsub(/^ +/,"",$2); print $2; exit}')
+else
+    cpu_model="unknown"
+    cpu_total="unknown"
+    cpu_sockets="unknown"
+    cpu_cores_per_socket="unknown"
+    cpu_threads_per_core="unknown"
+fi
+
+cpu_model=$(get_value "$cpu_model" "unknown")
+cpu_total=$(get_value "$cpu_total" "unknown")
+cpu_sockets=$(get_value "$cpu_sockets" "unknown")
+cpu_cores_per_socket=$(get_value "$cpu_cores_per_socket" "unknown")
+cpu_threads_per_core=$(get_value "$cpu_threads_per_core" "unknown")
+
+# ---------- Memory and load ----------
+if has_cmd free; then
+    mem_info=$(free -h | awk '/Mem:/ {print $3 " used / " $2 " total"}')
+else
+    mem_info="unknown"
+fi
+
+load_avg=$(awk '{print $1 ", " $2 ", " $3}' /proc/loadavg 2>/dev/null || echo "unknown")
+
+# ---------- Disk information ----------
+home_usage=$(df -h "$HOME" 2>/dev/null | awk 'NR==2 {print $3 " used / " $2 " total (" $5 ")"}')
+pwd_usage=$(df -h "$current_dir" 2>/dev/null | awk 'NR==2 {print $3 " used / " $2 " total (" $5 ")"}')
+
+home_usage=$(get_value "$home_usage" "unknown")
+pwd_usage=$(get_value "$pwd_usage" "unknown")
+
+# ---------- SLURM / HPC context ----------
+if [[ -n "${SLURM_JOB_ID:-}" ]]; then
+    session_type="SLURM job"
+    slurm_job_id="${SLURM_JOB_ID:-unknown}"
+    slurm_job_name="${SLURM_JOB_NAME:-unknown}"
+    slurm_partition="${SLURM_JOB_PARTITION:-${SLURM_PARTITION:-unknown}}"
+    slurm_nodes="${SLURM_JOB_NODELIST:-unknown}"
+    slurm_num_nodes="${SLURM_JOB_NUM_NODES:-unknown}"
+    slurm_tasks="${SLURM_NTASKS:-unknown}"
+    slurm_cpus_per_task="${SLURM_CPUS_PER_TASK:-unknown}"
+    slurm_cpus_on_node="${SLURM_CPUS_ON_NODE:-unknown}"
+
+    if [[ -n "${SLURM_MEM_PER_NODE:-}" ]]; then
+        slurm_mem="${SLURM_MEM_PER_NODE} MB per node"
+    elif [[ -n "${SLURM_MEM_PER_CPU:-}" ]]; then
+        slurm_mem="${SLURM_MEM_PER_CPU} MB per CPU"
+    else
+        slurm_mem="unknown"
+    fi
+else
+    session_type="login / normal interactive shell"
+    slurm_job_id="not in a SLURM job"
+    slurm_job_name="not in a SLURM job"
+    slurm_partition="not in a SLURM job"
+    slurm_nodes="not in a SLURM job"
+    slurm_num_nodes="not in a SLURM job"
+    slurm_tasks="not in a SLURM job"
+    slurm_cpus_per_task="not in a SLURM job"
+    slurm_cpus_on_node="not in a SLURM job"
+    slurm_mem="not in a SLURM job"
+fi
+
+# ---------- Development environment ----------
+if has_cmd gcc; then
+    gcc_info=$(gcc --version 2>/dev/null | head -n 1)
+else
+    gcc_info="not loaded / not found"
+fi
+
+if has_cmd mpicc; then
+    mpi_info=$(mpicc --version 2>/dev/null | head -n 1)
+    mpi_path=$(command -v mpicc)
+else
+    mpi_info="not loaded / not found"
+    mpi_path="not loaded / not found"
+fi
+
+if has_cmd python; then
+    python_info=$(python --version 2>&1)
+elif has_cmd python3; then
+    python_info=$(python3 --version 2>&1)
+else
+    python_info="not loaded / not found"
+fi
+
+if has_cmd git; then
+    git_info=$(git --version 2>/dev/null)
+else
+    git_info="not loaded / not found"
+fi
+
+# ---------- Output ----------
+printf "${CYAN}"
+cat <<'EOF'
+                 \  |  /
+                  \ | /
+                   \|/
+        __..---""""""""---..__
+   _.-""                         "-._
+ .'      ////      R O R Q U A L     `.
+(       ////                  /\       )
+ `.     ////                 /  \    .'
+   `-._        ___..---..___     _.-'
+        `----""             ""---'
+
+        Alliance / Calcul Québec HPC
+EOF
+printf "${RESET}"
+
+echo -e "${BOLD}${user_name}@${short_host}${RESET}"
+echo -e "${DIM}${date_info}${RESET}"
+echo
+
+echo -e "${CYAN}System${RESET}"
+echo -e "  ${BLUE}OS:${RESET}              $os_name"
+echo -e "  ${BLUE}Kernel:${RESET}          $kernel_name"
+echo -e "  ${BLUE}Architecture:${RESET}    $architecture"
+echo -e "  ${BLUE}Shell:${RESET}           $shell_name"
+echo -e "  ${BLUE}Session:${RESET}         $session_type"
+echo -e "  ${BLUE}Uptime:${RESET}          $uptime_info"
+echo
+
+echo -e "${CYAN}Node resources${RESET}"
+echo -e "  ${BLUE}CPU model:${RESET}       $cpu_model"
+echo -e "  ${BLUE}Logical CPUs:${RESET}    $cpu_total"
+echo -e "  ${BLUE}CPU layout:${RESET}      sockets=$cpu_sockets, cores/socket=$cpu_cores_per_socket, threads/core=$cpu_threads_per_core"
+echo -e "  ${BLUE}Memory:${RESET}          $mem_info"
+echo -e "  ${BLUE}Load average:${RESET}    $load_avg"
+echo
+
+echo -e "${CYAN}Storage${RESET}"
+echo -e "  ${BLUE}HOME usage:${RESET}      $home_usage"
+echo -e "  ${BLUE}PWD usage:${RESET}       $pwd_usage"
+echo -e "  ${BLUE}Current path:${RESET}    $short_dir"
+echo
+
+echo -e "${CYAN}SLURM context${RESET}"
+echo -e "  ${BLUE}Job ID:${RESET}          $slurm_job_id"
+echo -e "  ${BLUE}Job name:${RESET}        $slurm_job_name"
+echo -e "  ${BLUE}Partition:${RESET}       $slurm_partition"
+echo -e "  ${BLUE}Nodes:${RESET}           $slurm_nodes"
+echo -e "  ${BLUE}Number of nodes:${RESET} $slurm_num_nodes"
+echo -e "  ${BLUE}Tasks:${RESET}           $slurm_tasks"
+echo -e "  ${BLUE}CPUs/task:${RESET}       $slurm_cpus_per_task"
+echo -e "  ${BLUE}CPUs on node:${RESET}    $slurm_cpus_on_node"
+echo -e "  ${BLUE}SLURM memory:${RESET}    $slurm_mem"
+echo
+
+echo -e "${CYAN}Development environment${RESET}"
+echo -e "  ${BLUE}GCC:${RESET}             $gcc_info"
+echo -e "  ${BLUE}MPI compiler:${RESET}    $mpi_info"
+echo -e "  ${BLUE}mpicc path:${RESET}      $mpi_path"
+echo -e "  ${BLUE}Python:${RESET}          $python_info"
+echo -e "  ${BLUE}Git:${RESET}             $git_info"
+
+if has_cmd module; then
+    echo
+    echo -e "${CYAN}Loaded modules${RESET}"
+    module list 2>&1 | sed 's/^/  /'
+fi
+
+echo
