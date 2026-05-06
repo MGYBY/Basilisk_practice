@@ -222,6 +222,28 @@ event init (i = 0)
   }
 }
 
+event maxAmpVel (t += 0.50)
+{
+  char name[80];
+  sprintf (name, "maxAmpVel.txt");
+  FILE * fp = fopen (name, "a+");
+
+  double hmin = HUGE, hmax = -HUGE, umax = -HUGE;
+  foreach (reduction (min:hmin) reduction (max:hmax)
+    reduction (max:umax)) {
+    hmin = min (hmin, h[]);
+  hmax = max (hmax, h[]);
+  for (int l = 0; l < nl; l++) {
+    vector uk = ul[l];
+    scalar lam = lambdal[l];
+    umax = max (umax, fabs (uk.x[]));
+  }
+    }
+    fprintf (fp, "%g %g %g %g\n", t, hmin, hmax, umax);
+
+    fclose (fp);
+}
+
 event logfile (i += 20)
 {
   double hmin = HUGE, hmax = -HUGE, umax = -HUGE, lmin = HUGE, lmax = -HUGE;
