@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+case_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+cd "$case_dir"
+rm -rf gfs dumps interfaces slices wave_amplitude_plots
+rm -f roll_wave_amr roll_wave_amr_smoke roll_wave_amr_steady rollwave
+rm -f a.out _roll_wave_amr.c out-*.gfs
+rm -rf .qcc*
+rm -f log log.* perfs run_configuration.txt
+rm -f wave_amplitude.tsv initial_condition_audit.tsv
+rm Frl-*
+rm -rf base_state
+# Manually generated base_state/*.dat files are deliberately preserved.
